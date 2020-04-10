@@ -54,6 +54,7 @@ class Lexer {
     this.char = this.charTypes[this.index];
     this.currentToken = {};
     this.tokens = [];
+    this.lex();
   }
 
   throwErr (msg) {
@@ -160,34 +161,26 @@ class Lexer {
   }
 
   lex() {
-    if (!this.char) {
-      console.log(this.tokens)
-      process.exit(1);
-    }
-    switch(this.char.type) {
-      case "QUOTE":
-        this.handleStr();
-        break;
-      case "NUMBER":
-        this.handleNum();
-        break;
-      case "LETTER":
-        this.handleId();
-        break;
-      default:
-        this.handleOperator();
-    }
+    if (this.char) {
+      switch(this.char.type) {
+        case "QUOTE":
+          this.handleStr();
+          break;
+        case "NUMBER":
+          this.handleNum();
+          break;
+        case "LETTER":
+          this.handleId();
+          break;
+        default:
+          this.handleOperator();
+      };
+    } else {
+      // console.log(this.tokens);
+    };
   };
 };
 
-console.time('lexing')
-
-const lexer = new Lexer("\
->x = 20; \n\
->r4 = 567; >ry = (x + 23) - 345;\n\
-'hey'\
-78 ;'hell0'");
-
-lexer.lex();
-
-console.timeEnd('lexing');
+module.exports = {
+  Lexer,
+};
