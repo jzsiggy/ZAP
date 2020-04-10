@@ -1,4 +1,4 @@
-const { tokenList } = require('./tokenList');
+const { tokenList , reserved } = require('./tokenList');
 
 class CharSeperator {
   constructor(input) {
@@ -111,6 +111,8 @@ class Lexer {
   };
 
   handleNum() {
+    let hasDecimal = false;
+
     this.currentToken = {
       "type" : "NUMBER",
       "line" : this.char.line,
@@ -118,7 +120,11 @@ class Lexer {
       "value" : "",
     };
 
-    while (this.char.type == "NUMBER") {
+    // Long statements to handle decimal and int numbers
+    while (this.char.type == "NUMBER" || (!hasDecimal && this.char.type == "DOT" && this.peakNext() && this.peakNext().type == "NUMBER")) {
+      if (this.char.type == "DOT") {
+        hasDecimal = true;
+      };
       this.currentToken.value = this.currentToken.value.concat(this.char.value);
       this.next();
       if (!this.char) {
@@ -145,20 +151,49 @@ class Lexer {
         break;
       };
     };
+
+    if (Object.keys(reserved).includes(this.currentToken.value)) {
+      this.currentToken.type = reserved[this.currentToken.value];
+    };
+
     this.tokens.push(this.currentToken);
     this.resetCurrentToken();
     this.lex();
   };
 
+
+  isDoubleCharOperator() {
+    let operatorToTest = this.char.value.concat(this.peakNext().value)
+    for (let [ type , verification ] of Object.entries(tokenList)) {
+      if (verification(operatorToTest) && (type != "UNRECOGNIZED")) {
+        return {
+          "type" : type,
+          "line" : this.char.line,
+          "col" : this.char.col,
+          "value" : operatorToTest,
+        };
+      };
+    };
+    return false;
+  };
+
   handleOperator() {
     if (this.char.type != "WHITESPACE") {
-      this.currentToken = this.char;
-      this.tokens.push(this.currentToken);
-      this.resetCurrentToken();
-    }
+      let doubleCharOperator = this.isDoubleCharOperator();
+      if (doubleCharOperator) {
+        this.next();
+        this.currentToken = doubleCharOperator;
+        this.tokens.push(this.currentToken);
+        this.resetCurrentToken();
+      } else {
+        this.currentToken = this.char;
+        this.tokens.push(this.currentToken);
+        this.resetCurrentToken();
+      };
+    };
     this.next();
     this.lex();
-  }
+  };
 
   lex() {
     if (this.char) {

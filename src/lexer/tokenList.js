@@ -4,21 +4,43 @@ const tokenList = {
   "DIVIDE" : (input) => input == '/',
   "MULTIPLY" : (input) => input == '*',
   "MODULO" : (input) => input == '%',
+
+  "EQUALS" : (input) => input == '=',
+
+  "GREATERTHAN" : (input) => input == '>',
+  "LESSTHAN" : (input) => input == '<',
+  "NOT" : (input) => input == '!',
+  "GREATERTHANEQUAL" : (input) => input == '>=',
+  "LESSTHANEQUAL" : (input) => input == '<=',
+  "NOTEQUAL" : (input) => input == '!=',
+  "EQUALTO" : (input) => input == '==',
+
   "LPAREN" : (input) => input == '(',
   "RPAREN" : (input) => input == ')',
   "LBRACKET" : (input) => input == '{',
   "RBRACKET" : (input) => input == '}',
+
   "SEMICOLON" : (input) => input ==';',
-  "EQUALS" : (input) => input == '=',
   "QUOTE" : (input) => input == "'",
-  "SYMBOLSETTER" : (input) => input == '>',
-  
-  "NUMBER" : (input) => /\d/.test(input) || input == '.',
-  "LETTER" : (input) => /\w/.test(input) && !/\d/.test(input),
-  "WHITESPACE" : (input) => /\s/.test(input),
+  "DOT" : (input) => input =='.',
+
+  "SYMBOLSETTER" : (input) => input == '@',
+
+  "NUMBER" : (input) => /^[0-9]+$/.test(input),
+  "LETTER" : (input) => /^[a-zA-Z]+$/.test(input),
+  "WHITESPACE" : (input) => !/\S/.test(input),
+
   "UNRECOGNIZED" : (input) => true,
 };
 
+const reserved = {
+  "for" : 'FOR',
+  "while" : 'WHILE',
+  "return" : 'RETURN',
+  "show" : "SHOW",
+}
+
 module.exports = {
   tokenList,
+  reserved,
 };
