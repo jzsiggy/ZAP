@@ -1,65 +1,83 @@
 const { Lexer } = require('../lexer/lexer');
-const { Binary , Unary , Literal , Group } = require('./expressions');
 
 class Binary {
   constructor(leftNode, operator, rightNode) {
-    this.leftNode = leftNode;
+    this.leftNode = parse(leftNode);
     this.operator = operator;
-    this.rightNode = rightNode;
+    this.rightNode = parse(rightNode);
   };
   operate() {
-    if (leftNode is Literal && rightNode is literal) {
-      //do operation;
-    } else {
-      parse(leftNode);
-      parse(rightNode);
+    if (this.leftNode instanceof Literal && this.rightNode instanceof Literal) {
+      console.log('doing operation' + this.leftNode.value + this.operator.type + this.rightNode.value); 
     };
+  };
+};
+
+class Literal {
+  constructor(value) {
+    this.value = value;
   };
 };
 
 class Group {
   constructor(expression) {
-    parse(expression);
+    this.value = parse(expression);
   };
 };
 
-class Unary {
-
-}
-
-class Literal {
-  constructor(literal) {
-    this.value = Literal.value;
-  };
-};
 
 const getClosingParen = (expression, index) => {
-
+  let openingParen = 1;
+  let closingParen = 0;
+  while (index < expression.length) {
+    if (expression[index]['type'] == "LPAREN") {
+      openingParen++;
+    };
+    if (expression[index]['type'] == "RPAREN") {
+      closingParen++;
+    };
+    if (openingParen == closingParen) {
+      return index;
+    };
+    index++;
+  };
 }
 
 const parse = (expression) => {
-  for ( let [index , token] in expression.entries()) {
+  console.log("expression to be parsed");
+  console.log(expression)
+
+
+  if (expression[0]['type'] == "LPAREN") {
+    console.log("ISPAREN")
+    let closingParen = getClosingParen(expression , 1);
+    let node = new Group( expression.slice(1, closingParen) );
+    console.log(node);
+    return node;
+  };
+
+
+  for ( let [index , token] of expression.entries()) {
     if (token.type == "PLUS" || token.type == "MINUS") {
-      const result = new Binary( this.tokens.slice(0, index) , this.currentToken.type , this.tokens.slice(index) );
-      return result.operate();
+      let node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
+      console.log(node);
+      return node;
     };
   };
 
-  for ( let [index , token] in expression.entries()) {
+  for ( let [index , token] of expression.entries()) {
     if (token.type == "MULTIPLY" || token.type == "DIVIDE" || token.type == "MODULO") {
-      return new Binary( this.tokens.slice(0, index) , this.currentToken.type , this.tokens.slice(index) )
-    };
+      let node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
+      console.log(node);
+      return node;    };
   };
 
-  for ( let [index , token] in expression.entries()) {
-    if (token.type == "LPAREN") {
-      let closingParen = getClosingParen(expression, index);
-      return new Group( this.tokens.slice(index, closingParen) )
-    };
+  if (expression.length == 1 && expression[0]['type'] == "NUMBER") {
+    console.log('making literal' + ' ' + expression[0]['value'])
+    return new Literal(expression[0]['value']);
   };
-
-  if (expression.length == 1 || expression[0][type] == "NUMBER") {
-    return new Literal(expression[0]);
-  }
 };
 
+
+const lexer = new Lexer(' 1 / 5 + (6 * ( 8 / 2) + 3)');
+parse(lexer.tokens);
