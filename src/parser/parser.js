@@ -26,6 +26,18 @@ class Binary {
   }
 };
 
+class Unary {
+  constructor(sign , number) {
+    this.sign = sign;
+    this.number = number;
+    this.value = this.operate();
+  }
+  operate() {
+    console.log('is UNARY')
+    return parseFloat(this.sign.value.concat(this.number.value));
+  };
+}
+
 class Literal {
   constructor(value) {
     this.value = parseFloat(value);
@@ -72,16 +84,27 @@ const parse = (expression) => {
     };
     if (token.type == "RPAREN") {
       closingParen++;
-    }
+    };
     if ((token.type == "PLUS" || token.type == "MINUS") && !isInGroup()) {
-      let node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
+      let node;
+      try {
+        node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
+      } catch {
+        node = new Unary(token , expression[index+1]);
+      };
       console.log(node);
       return node;
     };
   };
   
   for ( let [index , token] of expression.entries()) {
-    if (token.type == "MULTIPLY" || token.type == "DIVIDE" || token.type == "MODULO") {
+    if (token.type == "LPAREN") {
+      openingParen++;
+    };
+    if (token.type == "RPAREN") {
+      closingParen++;
+    };
+    if ((token.type == "MULTIPLY" || token.type == "DIVIDE" || token.type == "MODULO") && !isInGroup()) {
       let node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
       console.log(node);
       return node;    };
@@ -105,5 +128,5 @@ const parse = (expression) => {
 };
 
 
-const lexer = new Lexer(' 4 * (3 + 2) * 45 + 4 ');
+const lexer = new Lexer(' 3 * (1 + (-4))  ');
 parse(lexer.tokens);
