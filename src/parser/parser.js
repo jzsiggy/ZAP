@@ -5,23 +5,36 @@ class Binary {
     this.leftNode = parse(leftNode);
     this.operator = operator;
     this.rightNode = parse(rightNode);
+    this.value = this.operate();
   };
   operate() {
-    if (this.leftNode instanceof Literal && this.rightNode instanceof Literal) {
-      console.log('doing operation' + this.leftNode.value + this.operator.type + this.rightNode.value); 
+    if (this.operator == 'PLUS') {
+      return parseFloat(this.leftNode.value) + parseFloat(this.rightNode.value);
     };
-  };
+    if (this.operator == 'MINUS') {
+      return parseFloat(this.leftNode.value) - parseFloat(this.rightNode.value);
+    };
+    if (this.operator == 'MULTIPLY') {
+      return this.leftNode.value * this.rightNode.value;
+    };
+    if (this.operator == 'DIVIDE') {
+      return this.leftNode.value / this.rightNode.value;
+    };
+    if (this.operator == 'MODULO') {
+      return this.leftNode.value % this.rightNode.value;
+    };
+  }
 };
 
 class Literal {
   constructor(value) {
-    this.value = value;
+    this.value = parseFloat(value);
   };
 };
 
 class Group {
   constructor(expression) {
-    this.value = parse(expression);
+    this.value = parse(expression).value;
   };
 };
 
@@ -47,37 +60,50 @@ const parse = (expression) => {
   console.log("expression to be parsed");
   console.log(expression)
 
+  let openingParen = 0;
+  let closingParen = 0;
 
-  if (expression[0]['type'] == "LPAREN") {
-    console.log("ISPAREN")
-    let closingParen = getClosingParen(expression , 1);
-    let node = new Group( expression.slice(1, closingParen) );
-    console.log(node);
-    return node;
-  };
-
-
+  let isInGroup = () => openingParen != closingParen;
+  
+  
   for ( let [index , token] of expression.entries()) {
-    if (token.type == "PLUS" || token.type == "MINUS") {
+    if (token.type == "LPAREN") {
+      openingParen++;
+    };
+    if (token.type == "RPAREN") {
+      closingParen++;
+    }
+    if ((token.type == "PLUS" || token.type == "MINUS") && !isInGroup()) {
       let node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
       console.log(node);
       return node;
     };
   };
-
+  
   for ( let [index , token] of expression.entries()) {
     if (token.type == "MULTIPLY" || token.type == "DIVIDE" || token.type == "MODULO") {
       let node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
       console.log(node);
       return node;    };
-  };
+    };
+    
+    for ( let [index , token] of expression.entries()) {
+      if (token.type == "LPAREN") {
+        console.log("ISPAREN")
+        let closingParen = getClosingParen(expression , index+1);
+        let node = new Group( expression.slice(index+1, closingParen) );
+        console.log(node);
+        return node;
+      }
+    };
 
   if (expression.length == 1 && expression[0]['type'] == "NUMBER") {
-    console.log('making literal' + ' ' + expression[0]['value'])
-    return new Literal(expression[0]['value']);
+    let node = new Literal(expression[0]['value']);
+    console.log(node);
+    return node;
   };
 };
 
 
-const lexer = new Lexer(' 1 / 5 + (6 * ( 8 / 2) + 3)');
+const lexer = new Lexer(' 4 * (3 + 2) * 45 + 4 ');
 parse(lexer.tokens);
