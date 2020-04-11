@@ -163,18 +163,20 @@ class Lexer {
 
 
   isDoubleCharOperator() {
-    let operatorToTest = this.char.value.concat(this.peakNext().value)
-    for (let [ type , verification ] of Object.entries(tokenList)) {
-      if (verification(operatorToTest) && (type != "UNRECOGNIZED")) {
-        return {
-          "type" : type,
-          "line" : this.char.line,
-          "col" : this.char.col,
-          "value" : operatorToTest,
+    if (this.peakNext()) {
+      let operatorToTest = this.char.value.concat(this.peakNext().value)
+      for (let [ type , verification ] of Object.entries(tokenList)) {
+        if (verification(operatorToTest) && (type != "UNRECOGNIZED")) {
+          return {
+            "type" : type,
+            "line" : this.char.line,
+            "col" : this.char.col,
+            "value" : operatorToTest,
+          };
         };
       };
+      return false;
     };
-    return false;
   };
 
   handleOperator() {
