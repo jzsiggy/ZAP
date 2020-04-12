@@ -61,15 +61,139 @@ class Group {
   };
 };
 
+/*
+                 ::::{[{[ --> THE PARSING LOGIC <-- ]}]}::::
 
+        The logic behind the parser is to create a tree of operations.
+      It starts by iterating through the Whole raw expression (token list),
+                            from right to left,
+              trying to find the operators of lowest precedence 
+                    (the ones that will be executed last).
+              As soon as it finds an operator of type "+" or "-",
+                 it becomes the first expression in the tree.
+       The expressions can be of 4 types: Binary, Unary, Group or Literal.
+
+              The Parser will iterate through the raw Expression,
+                  Always trying break down bigger expressions
+             into smaller ones until it works with only Primaries.
+
+                             THE EXPRESSION TYPES
+
+          Binary Expressions :
+            --> Have a left and right sub-expression, along with an operator.
+            --> The expression's value is calculated by
+                joining the values of the left and right 
+                sub-expressions through the operator.
+            --> EXAMPLES:
+      
+          1.     "PLUS"                    2.        "MULTPLY"                                            
+                   /\                                    /\                            
+                  /  \                                  /  \                           
+                 5    6                               5+6  7-3                    
+                                                                                  
+           Calculated Value: 11                  Calculated Value: 44                                                                 
+                         
+            --> {{ RECURSION ALERT }}
+                Notice how in Example 2,
+                the sub-expressions are also of type "Binary Expression"   
+
+
+
+          Unary Expressions :
+            --> Have a sub-expression, along with a unary operator ("!" or "-").
+            --> The expression's value is calculated by
+                joining the value of the sub-expression with the operator.
+            --> EXAMPLES:
+      
+          1.     "PLUS"                    2.        "MINUS"                                            
+                    |                                   |                           
+                    5                                   9                     
+                                                                
+                                                                                  
+           Calculated Value: 5                  Calculated Value: -9                                                                 
+                          
+
+
+          Group Expressions :
+            --> Are the ones in between parenthesis.
+            --> The expression's value is calculated by parsing
+                the expression in between parenthesis.
+            --> Examples:
+          
+          1.    "(2 + 3)"                                                             
+                    |
+                    V                                                         
+                   2+3    
+                    |
+                    V
+                  "PLUS"                                           
+                    /\                                            
+                   /  \
+                  2    3
+                   
+           Calculated Value: 5                   
+                
+                     
+           
+          Primary Expressions :
+            --> Are the ones that represent a Literal (String, Int, Float, etc.).
+            --> The expression's value is the Literal it holds.
+            --> Examples:
+          
+          1.      "245"                                                             
+                    
+           Calculated Value: 245                              
+
+
+                            {[{[ --> EXAMPLE <--]}]}
+                                                                                                                                                                                  
+                    (3 + 5) - 8 * (4 - (8 / 2) - 7) + 4 * (9)                                                                                                                                                    
+                                                    |                                                                                                                              
+                                                  "PLUS"                                                                                                                                           
+                                                    /\                                                                                                                                         
+                                                   /  \                                                                                                                                        
+                     (3 + 5) - 8 * (4 - (8 / 2) - 7)   4 * (9)                                                                                                                                                                 
+                             |                           |                                    
+                          "MINUS"                      "MULT"                                                                                                                                  
+                            /\                           /\                                                                                                                                                                                       
+                           /  \                         4   (9)                                                                                                                                                       
+                          /    \                             |                                                                    
+                  (3 + 5)      8 * (4 - (8 / 2) - 7)         9                                                                                       
+                /                |                                                                                                          
+          GROUP(3+5)         "MULTIPLY"                                                                                                      
+              |                  /\                                                                                         
+            3 + 5               /  \                                                                     
+              |                8    (4 - (8 / 2) - 7)                                                         
+            "PLUS"                          |                             
+              /\                     4 - (8 / 2) - 7                                                     
+             /  \                                |                                         
+            3    5                            "MINUS"                                 
+                                                 /\                             
+                                                /  \                              
+                                    4 - (8 / 2)      7                         
+                                      |                                        
+                                   "MINUS"                                          
+                                      /\                                                                        
+                                     /  \                                                                                                        
+                                    4    (8 / 2)                                                                    
+                                            |                                                                
+                                          8 / 2                                                                  
+                                            |                                                                
+                                         "DIVIDE"                                                                   
+                                            /\                                                                
+                                           /  \        
+                                          8    2
+                                           
+
+*/
 
 class Parser {
   constructor(tokens) {
     this.rawExpression = tokens;
     this.index = this.rawExpression.length - 1;
-    this.previousToken = null;
+    this.previousToken = this.rawExpression[this.index - 1];
     this.currentToken = this.rawExpression[this.index];
-    this.nextToken = this.rawExpression[this.index+1];
+    this.nextToken = null;
     this.openingParen = 0;
     this.closingParen = 0;
 
@@ -85,7 +209,18 @@ class Parser {
     this.closingParen = 0;
 
     this.checkParenthese();
-  }
+  };
+
+  resetToEnd() {
+    this.index = this.rawExpression.length - 1;
+    this.previousToken = this.rawExpression[this.index - 1];
+    this.currentToken = this.rawExpression[this.index];
+    this.nextToken = null;
+    this.openingParen = 0;
+    this.closingParen = 0;
+
+    this.checkParenthese();
+  };
 
   next() {
     this.index++;
@@ -142,7 +277,6 @@ class Parser {
 
   handleMultiplication() {
     console.log('isBinary')
-
     let node = new Binary(
       this.rawExpression.slice(0, this.index),
       this.currentToken,
@@ -153,7 +287,6 @@ class Parser {
 
   handleOpenParen() {
     console.log('isGroup')
-
     let group = []
     while (this.isInGroup()) {
       group.push(this.currentToken);
@@ -176,7 +309,13 @@ class Parser {
     while (this.index >= 0) {
       if (this.currentToken.type == "PLUS" || this.currentToken.type == "MINUS") {
         if (!this.isInGroup()) {
-          return this.handleAddition();
+          if (this.index == 0) {
+            return this.handleAddition();
+          } else {
+            if (this.previousToken.type != "PLUS" && this.previousToken.type != "MINUS") {
+              return this.handleAddition();
+            };
+          };
         };
       };
       this.prev();
@@ -214,100 +353,10 @@ class Parser {
 
 console.time('parsing')
 
-const lexer = new Lexer(' 1 + 3 * (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)))  ');
+const lexer = new Lexer('  1 + 3 * (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)))  ');
 const parser = new Parser(lexer.tokens);
 result = parser.parse();
-console.log(result);
+console.log(result.value);
 
 console.timeEnd('parsing')
 
-
-
-
-
-
-
-
-
-// const getClosingParen = (expression, index) => {
-//   let openingParen = 1;
-//   let closingParen = 0;
-//   while (index < expression.length) {
-//     if (expression[index]['type'] == "LPAREN") {
-//       openingParen++;
-//     };
-//     if (expression[index]['type'] == "RPAREN") {
-//       closingParen++;
-//     };
-//     if (openingParen == closingParen) {
-//       return index;
-//     };
-//     index++;
-//   };
-// }
-
-// const parse = (expression) => {
-//   console.log("expression to be parsed");
-//   console.log(expression)
-
-//   let openingParen = 0;
-//   let closingParen = 0;
-
-//   let isInGroup = () => openingParen != closingParen;
-  
-  
-//   for ( let [index , token] of expression.entries()) {
-//     if (token.type == "LPAREN") {
-//       openingParen++;
-//     };
-//     if (token.type == "RPAREN") {
-//       closingParen++;
-//     };
-//     if ((token.type == "PLUS" || token.type == "MINUS") && !isInGroup()) {
-//       let node;
-//       if (expression[index+1] && expression[index-1]) {
-//         node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
-//       } else if (expression[index+1] && !expression[index-1])
-//       node = new Unary(token , expression.slice(index+1));
-//       console.log(node);
-//       return node;
-//     };
-//   };
-  
-//   for ( let [index , token] of expression.entries()) {
-//     if (token.type == "LPAREN") {
-//       openingParen++;
-//     };
-//     if (token.type == "RPAREN") {
-//       closingParen++;
-//     };
-//     if ((token.type == "MULTIPLY" || token.type == "DIVIDE" || token.type == "MODULO") && !isInGroup()) {
-//       let node = new Binary( expression.slice(0, index) , token.type , expression.slice(index+1) );
-//       console.log(node);
-//       return node;    };
-//     };
-    
-//     for ( let [index , token] of expression.entries()) {
-//       if (token.type == "LPAREN") {
-//         console.log("ISPAREN")
-//         let closingParen = getClosingParen(expression , index+1);
-//         let node = new Group( expression.slice(index+1, closingParen) );
-//         console.log(node);
-//         return node;
-//       }
-//     };
-
-//   if (expression.length == 1 && expression[0]['type'] == "NUMBER") {
-//     let node = new Literal(expression[0]['value']);
-//     console.log(node);
-//     return node;
-//   };
-// };
-
-
-// // const lexer = new Lexer('3 + - - (1 + 7) * 4  ');
-// // parse(lexer.tokens);
-
-// module.exports = {
-//   parse,
-// }
