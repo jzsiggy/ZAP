@@ -14,16 +14,19 @@ class Binary {
 
   operate() {
     if (this.operator == 'PLUS') {
-      return parseFloat(this.leftNode.value) + parseFloat(this.rightNode.value);
+      return this.leftNode.value + this.rightNode.value;
     };
     if (this.operator == 'MINUS') {
-      return parseFloat(this.leftNode.value) - parseFloat(this.rightNode.value);
+      return this.leftNode.value - this.rightNode.value;
     };
     if (this.operator == 'MULTIPLY') {
       return this.leftNode.value * this.rightNode.value;
     };
     if (this.operator == 'DIVIDE') {
       return this.leftNode.value / this.rightNode.value;
+    };
+    if (this.operator == 'MODULO') {
+      return this.leftNode.value % this.rightNode.value;
     };
     if (this.operator == 'EQUALTO') {
       return this.leftNode.value == this.rightNode.value;
@@ -37,6 +40,12 @@ class Binary {
     if (this.operator == 'LESSTHAN') {
       return this.leftNode.value < this.rightNode.value;
     };
+    if (this.operator == 'GREATERTHANEQUAL') {
+      return this.leftNode.value >= this.rightNode.value;
+    };
+    if (this.operator == 'LESSTHANEQUAL') {
+      return this.leftNode.value <= this.rightNode.value;
+    };
   }
 };
 
@@ -49,17 +58,25 @@ class Unary {
   }
   operate() {
     if (this.operator.type == "MINUS") {  
-      return ( - ( parseFloat( this.parser.parse().value ) ) );
+      return ( - ( this.parser.parse().value ) );
     };
     if (this.operator.type == "PLUS") {
-      return parseFloat((this.parser.parse().value));
+      return (this.parser.parse().value);
+    }
+    if (this.operator.type == "NOT") {
+      return !(this.parser.parse().value);
     }
   };
 }
 
 class Literal {
   constructor(token) {
-    this.value = parseFloat(token.value);
+    if (token.type == "NUMBER") {
+      this.value = parseFloat(token.value);
+    };
+    if (token.type == "STRING") {
+      this.value = token.value;
+    };
   };
 };
 
@@ -265,14 +282,74 @@ class Parser {
   }
 
   isOperator(token) {
-    let operators = ["MULTIPLY", "DIVIDE", "PLUS", "MINUS", "MODULO", "GREATERTHAN", "LESSTHAN", "EQUALTO"];
+    let operators = [
+      "MULTIPLY", 
+      "DIVIDE", 
+      "PLUS", 
+      "MINUS", 
+      "MODULO", 
+      "GREATERTHAN", 
+      "GREATERTHANEQUAL",
+      "LESSTHAN",
+      "LESSTHANEQUAL", 
+      "EQUALTO",
+      "NOTEQUALTO",
+      "NOT",
+    ];
     return (operators.includes(token.type) );
   };
 
-  isPrimary(type) {
-    let operators = ["STRING", "NUMBER"];
-    return (operators.includes(type) );
-  };
+  isEqualityOperator(token) {
+    let operators = [
+      "EQUALTO",
+      "NOTEQUALTO",
+    ];
+    return (operators.includes(token.type) );
+  }
+
+  isComparissonOperator(token) {
+    let operators = [ 
+      "GREATERTHAN", 
+      "GREATERTHANEQUAL",
+      "LESSTHAN",
+      "LESSTHANEQUAL", 
+    ];
+    return (operators.includes(token.type) );
+  }
+
+  isAdditionOperator(token) {
+    let operators = [
+      "PLUS",
+      "MINUS",
+    ];
+    return (operators.includes(token.type) );
+  }
+
+  isMultiplicationOperator(token) {
+    let operators = [
+      "MULTIPLY",
+      "DIVIDE",
+      "MODULO",
+    ];
+    return (operators.includes(token.type) );
+  }
+
+  isUnaryOperator(token) {
+    let operators = [
+      "MINUS",
+      "NOT",
+      "PLUS",
+    ];
+    return (operators.includes(token.type) );
+  }
+
+  isLiteral(token) {
+    let types = [
+      "STRING",
+      "NUMBER",
+    ];
+    return (types.includes(token.type) );
+  }
 
   handleBinary() {
     console.log('isBinary')
@@ -315,7 +392,7 @@ class Parser {
     console.log(this.rawExpression);
 
     /*
-      Parsing the expressions with lowest precedence ("+" & "-").
+      Parsing the expressions with lowest precedence (EQUALITY)
       We iterate through the rawExpression from right to left due to the association rule of these operators.
 
       The order of precedence is as follows
@@ -329,7 +406,7 @@ class Parser {
     */
 
     while (this.index >= 0) {
-      if (this.currentToken.type == "EQUALTO") {
+      if (this.isEqualityOperator(this.currentToken)) {
         if (!this.isInGroup()) {
           return this.handleBinary();
         };
@@ -339,7 +416,7 @@ class Parser {
     this.resetToEnd();
 
     while (this.index >= 0) {
-      if (this.currentToken.type == "GREATERTHAN" || this.currentToken.type == "LESSTHAN") {
+      if (this.isComparissonOperator(this.currentToken)) {
         if (!this.isInGroup()) {
           return this.handleBinary();
         };
@@ -349,7 +426,7 @@ class Parser {
     this.resetToEnd();
 
     while (this.index >= 0) {
-      if (this.currentToken.type == "PLUS" || this.currentToken.type == "MINUS") {
+      if (this.isAdditionOperator(this.currentToken)) {
         if (!this.isInGroup()) {
           if (this.previousToken) {
             if (!this.isOperator(this.previousToken)) {
@@ -363,7 +440,7 @@ class Parser {
     this.resetToEnd();
 
     while (this.index >= 0) {
-      if (this.currentToken.type == "MULTIPLY" || this.currentToken.type == "DIVIDE" || this.currentToken.type == "MODULO") {
+      if (this.isMultiplicationOperator(this.currentToken)) {
         if (!this.isInGroup()) {
           return this.handleBinary();
         };
@@ -373,8 +450,8 @@ class Parser {
     this.reset();
 
     while (this.currentToken) {
-      if (!this.isInGroup()) {
-        if (this.currentToken.type == "MINUS" || this.currentToken.type == "NOT") {
+      if (this.isUnaryOperator(this.currentToken)) {
+        if (!this.isInGroup()) {
           return this.handleUnary();
         };
       };
@@ -403,7 +480,7 @@ class Parser {
 
 console.time('parsing')
 
-const lexer = new Lexer(' -- (9)');
+const lexer = new Lexer("1 + 3 * (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)))");
 const parser = new Parser(lexer.tokens);
 result = parser.parse();
 console.log(result.value);
