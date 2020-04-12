@@ -1,19 +1,12 @@
 const { tokenList , reserved } = require('./tokenList');
+const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 
 class CharSeperator {
   constructor(input) {
+    this.errorHandler = new ErrorHandler();
     this.input = input;
     this.charTypes = [];
     this.getCharTypes();
-  };
-
-  throwErr (msg) {
-    try {
-      throw new Error(msg);
-    } catch (e) {
-      console.error(e);
-      process.exit(1);
-    };
   };
 
   getCharTypes() {
@@ -28,7 +21,7 @@ class CharSeperator {
           charDescription['col'] = col;
           charDescription['value'] = char;
           if (charDescription.type == "UNRECOGNIZED") {
-            this.throwErr(`UNRECOGNIZED SYNTAX -- ln: ${charDescription['line']} col: ${charDescription['col']}`)
+            this.errorHandler.throw(`UNRECOGNIZED SYNTAX`, charDescription['line'], charDescription['col']);
           } else {
             this.charTypes.push(charDescription);
           };
@@ -49,6 +42,7 @@ class CharSeperator {
 class Lexer {
   constructor (input) {
     this.charSeperator = new CharSeperator(input);
+    this.errorHandler = new ErrorHandler();
     this.charTypes = this.charSeperator.charTypes;
     this.index = 0;
     this.char = this.charTypes[this.index];
@@ -94,14 +88,14 @@ class Lexer {
     if (this.peakNext()) {
       this.next();
     } else {
-      this.throwErr('EOF WHILE PARSING STRING')
+      this.errorHandler.throw('EOF WHILE PARSING STRING', this.currentToken.line, this.currentToken.col);
     }
 
     while (this.char.type != "QUOTE") {
       this.currentToken.value = this.currentToken.value.concat(this.char.value);
       this.next();
       if (!this.char) {
-        this.throwErr('EOF WHILE PARSING STRING')
+        this.errorHandler.throw('EOF WHILE PARSING STRING', this.currentToken.line, this.currentToken.col);
       };
     };
     this.tokens.push(this.currentToken);
