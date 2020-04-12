@@ -39,6 +39,37 @@ class CharSeperator {
 };
 
 
+/*
+
+
+
+
+                          {[{[ --> THE LEXER <-- ]}]}
+
+                  The goal here is to take a stream of inputs
+               & separate it into tokens that have meaning to the
+                                   language.
+
+               We start by separating each character of the stream
+                                  by its type.
+                             The possible types are:
+
+           1. +  2. -  3. *  4. /  5. %  6. =  7. == 8. != 9. >  10.  <
+
+           11.<= 12.<= 13. ! 14. ( 15. ) 16. { 17. } 18. ; 19. ' 20. .
+
+       Besides these types, the char can be a Letter, Number or Whitespace.
+
+
+              After classifying all the characters, we can move on
+          to grouping these symbols into larger lexemes or tokens that
+                   our language will be able to understand.
+
+
+
+*/
+
+
 class Lexer {
   constructor (input) {
     this.charSeperator = new CharSeperator(input);
