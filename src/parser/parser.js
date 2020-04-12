@@ -32,17 +32,17 @@ class Binary {
 };
 
 class Unary {
-  constructor(sign , expression) {
+  constructor(operator , expression) {
     this.parser = new Parser(expression);
-    this.sign = sign;
+    this.operator = operator;
     this.expression = expression;
     this.value = this.operate();
   }
   operate() {
-    if (this.sign.type == "MINUS") {
-      return ( - ( parseFloat(this.parser.parse().value)));
-    }
-    if (this.sign.type == "PLUS") {
+    if (this.operator.type == "MINUS") {  
+      return ( - ( parseFloat( this.parser.parse().value ) ) );
+    };
+    if (this.operator.type == "PLUS") {
       return parseFloat((this.parser.parse().value));
     }
   };
@@ -66,7 +66,7 @@ class Group {
 class Parser {
   constructor(tokens) {
     this.rawExpression = tokens;
-    this.index = 0;
+    this.index = this.rawExpression.length - 1;
     this.previousToken = null;
     this.currentToken = this.rawExpression[this.index];
     this.nextToken = this.rawExpression[this.index+1];
@@ -89,6 +89,15 @@ class Parser {
 
   next() {
     this.index++;
+    this.previousToken = this.rawExpression[this.index-1];
+    this.currentToken = this.rawExpression[this.index];
+    this.nextToken = this.rawExpression[this.index+1];
+    
+    this.checkParenthese();
+  };
+
+  prev() {
+    this.index--;
     this.previousToken = this.rawExpression[this.index-1];
     this.currentToken = this.rawExpression[this.index];
     this.nextToken = this.rawExpression[this.index+1];
@@ -164,13 +173,13 @@ class Parser {
     console.log('expression to parse');
     console.log(this.rawExpression);
 
-    while (this.currentToken) {
+    while (this.index >= 0) {
       if (this.currentToken.type == "PLUS" || this.currentToken.type == "MINUS") {
         if (!this.isInGroup()) {
           return this.handleAddition();
         };
       };
-      this.next();
+      this.prev();
     };
     this.reset();
 
@@ -203,9 +212,22 @@ class Parser {
   };
 };
 
-const lexer = new Lexer(' (-1)  ');
+console.time('parsing')
+
+const lexer = new Lexer(' 1 + 3 * (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)))  ');
 const parser = new Parser(lexer.tokens);
-parser.parse()
+result = parser.parse();
+console.log(result);
+
+console.timeEnd('parsing')
+
+
+
+
+
+
+
+
 
 // const getClosingParen = (expression, index) => {
 //   let openingParen = 1;
