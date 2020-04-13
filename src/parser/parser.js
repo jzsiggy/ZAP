@@ -1,3 +1,4 @@
+const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 const { Lexer } = require('../lexer/lexer');
 
 class Binary {
@@ -215,6 +216,7 @@ class Group {
 
 class Parser {
   constructor(tokens) {
+    this.errorHandler = new ErrorHandler();
     this.rawExpression = tokens;
     this.index = this.rawExpression.length - 1;
     this.previousToken = this.rawExpression[this.index - 1];
@@ -353,19 +355,40 @@ class Parser {
 
   handleBinary() {
     console.log('isBinary')
+    let leftNode = this.rawExpression.slice(0, this.index);
+    let rightNode = this.rawExpression.slice(this.index+1);
+
+    if (!leftNode.length || !rightNode.length) {
+      this.errorHandler.throw(
+        'UNABLE TO PARSE BINARY EXPRESSION',
+        this.currentToken.line,
+        this.currentToken.col
+      );
+    };
+
     let node = new Binary(
-      this.rawExpression.slice(0, this.index),
+      leftNode,
       this.currentToken,
-      this.rawExpression.slice(this.index+1)
+      rightNode
     )
     return node;
   }
 
   handleUnary() {
     console.log('isUnary')
+    let expr = this.rawExpression.slice(this.index+1);
+
+    if (!expr.length) {
+      this.errorHandler.throw(
+        'UNABLE TO PARSE UNARY EXPRESSION',
+        this.currentToken.line,
+        this.currentToken.col
+      );
+    }
+
     let node = new Unary(
       this.currentToken,
-      this.rawExpression.slice(this.index+1)
+      expr,
     );
     return node;
   };
@@ -376,6 +399,9 @@ class Parser {
     while (this.isInGroup()) {
       group.push(this.currentToken);
       this.next();
+      if (!this.currentToken) {
+        this.errorHandler.throw(`EXPECTED ')' AFTER EXPRESSION`, null, null);
+      };
     };
     let node = new Group(group);
     return node;
@@ -480,9 +506,9 @@ class Parser {
 
 console.time('parsing')
 
-const lexer = new Lexer("1 + 3 * (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)))");
+const lexer = new Lexer("(--(-9 + 4) )");
 const parser = new Parser(lexer.tokens);
 result = parser.parse();
-console.log(result.value);
+console.log(result);
 
 console.timeEnd('parsing')

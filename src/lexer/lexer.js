@@ -43,7 +43,6 @@ class CharSeperator {
 
 
 
-
                           {[{[ --> THE LEXER <-- ]}]}
 
                   The goal here is to take a stream of inputs
@@ -81,15 +80,6 @@ class Lexer {
     this.tokens = [];
     this.lex();
   }
-
-  throwErr (msg) {
-    try {
-      throw new Error(msg);
-    } catch (e) {
-      console.error(e);
-      process.exit(1);
-    };
-  };
 
   resetCurrentToken() {
     this.currentToken = {};
