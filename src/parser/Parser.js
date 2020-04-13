@@ -353,6 +353,16 @@ class Parser {
     return (types.includes(token.type) );
   }
 
+  isReserved(token) {
+    let types = [ 
+      "FOR", 
+      "WHILE",
+      "RETURN",
+      "SHOW", 
+    ];
+    return types.includes(token.type);
+  };
+
   handleBinary() {
     // console.log('isBinary')
     let leftNode = this.rawExpression.slice(0, this.index);
@@ -413,6 +423,14 @@ class Parser {
     return node;
   };
 
+  handleReserved() {
+    this.errorHandler.throw(
+      'UNEXPECTED KEYWORD',
+      this.currentToken.line,
+      this.currentToken.col,
+    );
+  };
+
   parse() {
     // console.log('expression to parse');
     // console.log(this.rawExpression);
@@ -430,6 +448,14 @@ class Parser {
       --> GROUP
       --> PRIMARY
     */
+
+    while (this.currentToken) {
+      if (this.isReserved(this.currentToken)) {
+        this.handleReserved();
+      };
+      this.prev();
+    };
+    this.resetToEnd();
 
     while (this.index >= 0) {
       if (this.isEqualityOperator(this.currentToken)) {
@@ -510,7 +536,7 @@ module.exports = {
 
 // console.time('parsing')
 
-// const lexer = new Lexer("(--(-9 + 4) )");
+// const lexer = new Lexer("1 + show");
 // const parser = new Parser(lexer.tokens);
 // result = parser.parse();
 // console.log(result);
