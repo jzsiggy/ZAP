@@ -354,7 +354,7 @@ class Parser {
   }
 
   handleBinary() {
-    console.log('isBinary')
+    // console.log('isBinary')
     let leftNode = this.rawExpression.slice(0, this.index);
     let rightNode = this.rawExpression.slice(this.index+1);
 
@@ -375,7 +375,7 @@ class Parser {
   }
 
   handleUnary() {
-    console.log('isUnary')
+    // console.log('isUnary')
     let expr = this.rawExpression.slice(this.index+1);
 
     if (!expr.length) {
@@ -394,7 +394,7 @@ class Parser {
   };
 
   handleOpenParen() {
-    console.log('isGroup')
+    // console.log('isGroup')
     let group = []
     while (this.isInGroup()) {
       group.push(this.currentToken);
@@ -408,14 +408,14 @@ class Parser {
   };
 
   handlePrimary() {
-    console.log('isPrimary')
+    // console.log('isPrimary')
     let node = new Literal(this.currentToken);
     return node;
   };
 
   parse() {
-    console.log('expression to parse');
-    console.log(this.rawExpression);
+    // console.log('expression to parse');
+    // console.log(this.rawExpression);
 
     /*
       Parsing the expressions with lowest precedence (EQUALITY)
@@ -504,11 +504,15 @@ class Parser {
   };
 };
 
-console.time('parsing')
+module.exports = {
+  Parser,
+};
 
-const lexer = new Lexer("(--(-9 + 4) )");
-const parser = new Parser(lexer.tokens);
-result = parser.parse();
-console.log(result);
+// console.time('parsing')
 
-console.timeEnd('parsing')
+// const lexer = new Lexer("(--(-9 + 4) )");
+// const parser = new Parser(lexer.tokens);
+// result = parser.parse();
+// console.log(result);
+
+// console.timeEnd('parsing')
