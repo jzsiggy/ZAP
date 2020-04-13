@@ -2,7 +2,7 @@ class ErrorHandler {
   throw(msg, line, col) {
     let err;
     if (line && col) {
-      err = `${msg} -- ln: ${line}, col: ${col}`
+      err = `\n\n${msg} -- ln: ${line}, col: ${col}\n`
     } else {
       err = `${msg} -- EOF`
     };
