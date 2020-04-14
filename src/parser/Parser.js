@@ -423,6 +423,10 @@ class Parser {
     return node;
   };
 
+  handleVariable() {
+    console.log("You've reached a Variable declaration")
+  }
+
   handleReserved() {
     this.errorHandler.throw(
       'UNEXPECTED KEYWORD',
@@ -523,6 +527,14 @@ class Parser {
     while (this.currentToken) {
       if (this.currentToken.type == "NUMBER" || this.currentToken.type == "STRING") {
         return this.handlePrimary();
+      };
+      this.next();
+    };
+    this.reset();
+
+    while (this.currentToken) {
+      if (this.currentToken.type == "IDENTIFIER") {
+        return this.handleVariable();
       };
       this.next();
     };
