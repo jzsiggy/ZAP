@@ -17,8 +17,8 @@ const tokenList = {
 
   "LPAREN" : (input) => input == '(',
   "RPAREN" : (input) => input == ')',
-  "LBRACKET" : (input) => input == '{',
-  "RBRACKET" : (input) => input == '}',
+  "LBRACE" : (input) => input == '{',
+  "RBRACE" : (input) => input == '}',
 
   "SEMICOLON" : (input) => input ==';',
   "QUOTE" : (input) => input == "'",

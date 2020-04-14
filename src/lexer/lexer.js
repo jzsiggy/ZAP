@@ -227,8 +227,6 @@ class Lexer {
         default:
           this.handleOperator();
       };
-    } else {
-      // console.log(this.tokens);
     };
   };
 };
