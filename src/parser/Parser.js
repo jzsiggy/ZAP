@@ -2,10 +2,10 @@ const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 const { Evaluator } = require('../evaluator/Evaluator');
 
 class BlockStmt {
-  constructor(tokens, parser) {
+  constructor(tokens, environment) {
     this.tokens = tokens;
-    this.parser = parser;
-    this.parser.load(tokens);
+    this.parser = new Parser(environment);
+    this.parser.load(this.tokens);
     this.statements = this.parser.parse();
   };
 };
@@ -19,7 +19,7 @@ class PrintStmt {
     this.execute();
   };
   execute() {
-    if (this.value) {
+    if (this.value != undefined) {
       console.log(this.value);
     } else {
       console.log();
@@ -44,7 +44,7 @@ class DeclarationStmt {
     this.evaluator = evaluator;
     
     this.identifier = null;
-    this.value = null;
+    this.value = undefined;
 
     this.execute()
   };
@@ -52,12 +52,21 @@ class DeclarationStmt {
   execute() {
     if (this.statement[1].type == 'IDENTIFIER') {
       this.identifier = this.statement[1].value;
-      if (this.statement[2].type == 'EQUALS') {
-        this.evaluator.load(this.statement.slice(2));
-        this.value = this.evaluator.evaluate().value;
-        return this.environment.define(this.identifier, this.value);
+      if (this.statement[2]) {
+        if (this.statement[2].type == 'EQUALS') {
+          this.evaluator.load(this.statement.slice(3));
+          this.value =  this.evaluator.evaluate().value;
+          if (this.value == undefined) {
+            this.errorHandler.throw(
+              'INVALID DECLARATION STATEMENT',
+              this.statement[0].line,
+              this.statement[0].col
+            );
+          };
+        };
       };
-    }
+      return this.environment.define(this.identifier, this.value);
+    };
 
     this.errorHandler.throw(
       'INVALID DECLARATION STATEMENT',
@@ -90,6 +99,9 @@ class Parser {
     this.index = 0;
     this.currentToken = this.currentToken = this.tokens[this.index];
     this.previousToken = null;
+
+    this.openingBrace = 0;
+    this.closingBrace = 0;
 
     this.checkBrace();
   }
@@ -129,7 +141,7 @@ class Parser {
     if (statement[0].type == 'LBRACE') {
       let stmt = new BlockStmt(
         statement.slice(1, -1),
-        this
+        this.environment
       );
       // console.log(stmt);
       return stmt;
