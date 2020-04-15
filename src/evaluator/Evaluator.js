@@ -569,6 +569,11 @@ class Evaluator {
       this.next();
     };
     this.reset();
+
+    return {
+      value : undefined
+    };
+    
   };
 };
 

@@ -19,9 +19,13 @@ class PrintStmt {
     this.execute();
   };
   execute() {
-    console.log(this.value);
+    if (this.value) {
+      console.log(this.value);
+    } else {
+      console.log();
+    };
   };
-}
+};
 
 class ExprStmt {
   constructor(expression, evaluator) {
