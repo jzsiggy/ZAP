@@ -1,5 +1,17 @@
 const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 
+class Assignment {
+  constructor(token, expression, evaluator, environment) {
+    this.identifier = token.value;
+    this.evaluator = evaluator;
+    this.environment = environment;
+    this.expression = expression;
+    this.evaluator.load(expression);
+    this.value = this.evaluator.evaluate().value;
+    this.environment.assign(this.identifier, this.value);
+  };
+};
+
 class Binary {
   constructor(leftNode, operator, rightNode, evaluator) {
     this.evaluator = evaluator;
@@ -385,7 +397,6 @@ class Evaluator {
 
   isForbidden(token) {
     let types = [ 
-      "EQUALS", 
       "RBRACE",
       "LBRACE",
       "SEMICOLON", 
@@ -394,6 +405,27 @@ class Evaluator {
     ];
     return types.includes(token.type);
   }
+
+  handleAssignment() {
+    let assigned = this.rawExpression.slice(0, this.index);
+    let expression = this.rawExpression.slice(this.index+1);
+
+    if (assigned.length != 1 || !expression.length) {
+      this.errorHandler.throw(
+        'UNABLE TO PARSE ASSIGNMENT',
+        this.currentToken.line,
+        this.currentToken.col
+      );
+    };
+
+    let node = new Assignment(
+      assigned[0],
+      expression,
+      this,
+      this.environment
+    );
+    return node;
+  };
 
   handleBinary() {
     // console.log('isBinary')
@@ -503,6 +535,7 @@ class Evaluator {
       --> PRIMARY
     */
 
+
     while (this.currentToken) {
       if (this.isForbidden(this.currentToken)) {
         this.handleForbidden();
@@ -516,6 +549,28 @@ class Evaluator {
         this.handleReserved();
       };
       this.prev();
+    };
+    this.reset();
+
+    while (this.currentToken && this.nextToken) {
+      if (this.isLiteral(this.currentToken) && this.isLiteral(this.nextToken)) { 
+        this.errorHandler.throw(
+          'UNEXPECTED LITERAL',
+          this.nextToken.line,
+          this.nextToken.col
+        );
+      };
+      this.next();
+    };
+    this.reset();
+
+    while (this.currentToken) {
+      if (this.currentToken.type == 'EQUALS') {
+        if (!this.isInGroup()) {
+          return this.handleAssignment();
+        };
+      };
+      this.next();
     };
     this.resetToEnd();
 
