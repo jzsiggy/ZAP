@@ -383,6 +383,18 @@ class Evaluator {
     return types.includes(token.type);
   };
 
+  isForbidden(token) {
+    let types = [ 
+      "EQUALS", 
+      "RBRACE",
+      "LBRACE",
+      "SEMICOLON", 
+      "DOT",
+      "DECLARATOR",
+    ];
+    return types.includes(token.type);
+  }
+
   handleBinary() {
     // console.log('isBinary')
     let leftNode = this.rawExpression.slice(0, this.index);
@@ -465,6 +477,14 @@ class Evaluator {
     );
   };
 
+  handleForbidden() {
+    this.errorHandler.throw(
+      'FORBIDDEN SYMBOL IN EXPRESSION',
+      this.currentToken.line,
+      this.currentToken.col,
+    );
+  };
+
   evaluate() {
     // console.log('expression to parse');
     // console.log(this.rawExpression);
@@ -482,6 +502,14 @@ class Evaluator {
       --> GROUP
       --> PRIMARY
     */
+
+    while (this.currentToken) {
+      if (this.isForbidden(this.currentToken)) {
+        this.handleForbidden();
+      };
+      this.prev();
+    };
+    this.resetToEnd();
 
     while (this.currentToken) {
       if (this.isReserved(this.currentToken)) {
@@ -573,7 +601,7 @@ class Evaluator {
     return {
       value : undefined
     };
-    
+
   };
 };
 
