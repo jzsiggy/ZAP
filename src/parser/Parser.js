@@ -1,15 +1,12 @@
 const { ErrorHandler } = require('../errorHandler/ErrorHandler');
-const { Lexer } = require('../lexer/Lexer');
 const { Evaluator } = require('../evaluator/Evaluator');
-const { Environment } = require('../environment/Environment');
 
 class BlockStmt {
   constructor(tokens, parser) {
     this.tokens = tokens;
     this.parser = parser;
     this.parser.load(tokens);
-    this.parser.separateStatements();
-    this.statements = this.parser.statements;
+    this.statements = this.parser.parse();
   };
 };
 
@@ -124,7 +121,7 @@ class Parser {
     return this.currentToken.type == 'SEMICOLON';
   };
 
-  parseStatement(statement) {
+  handleStatement(statement) {
     if (statement[0].type == 'LBRACE') {
       let stmt = new BlockStmt(
         statement.slice(1, -1),
@@ -158,14 +155,14 @@ class Parser {
     return stmt;
   };
 
-  separateStatements() {
+  parse() {
     while (this.currentToken) {
       if (!this.isInBlock())
       {
         if (!this.isSemicolon()) {
           this.currentStatement.push(this.currentToken);
         } else {
-          let stmt = this.parseStatement(this.currentStatement);
+          let stmt = this.handleStatement(this.currentStatement);
           this.statements.push(stmt);
           this.resetCurrentStatement();
         };
@@ -176,7 +173,7 @@ class Parser {
       {
         this.currentStatement.push(this.currentToken);
         if (!this.isInBlock()) {
-          let stmt = this.parseStatement(this.currentStatement);
+          let stmt = this.handleStatement(this.currentStatement);
           this.statements.push(stmt);
           this.resetCurrentStatement();
         };
@@ -191,6 +188,9 @@ class Parser {
         this.previousToken.col
       );
     };
+
+    return this.statements;
+
   };
 };
 

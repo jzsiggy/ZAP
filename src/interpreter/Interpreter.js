@@ -11,9 +11,7 @@ class Interpreter {
     this.lexer = new Lexer(input);
     this.parser = new Parser(this.environment);
     this.parser.load(this.lexer.tokens);
-    this.parser.separateStatements();
-
-    this.statements = this.parser.statements;
+    this.statements = this.parser.parse();
 
     console.log(this.statements);
 
