@@ -4,8 +4,9 @@ const fs = require('fs');
 class Zap {
   constructor() {
     this.input = this.fetchInput();
-    new Interpreter(this.input);
-  }
+    this.interpreter = new Interpreter(this.input);
+    console.log(this.interpreter.statements);
+  };
 
   fetchInput() {
     try {
@@ -17,4 +18,6 @@ class Zap {
   };
 };
 
+console.time('interpreting');
 new Zap();
+console.timeEnd('interpreting');
