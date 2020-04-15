@@ -9,7 +9,7 @@ class Zap {
 
   fetchInput() {
     try {
-      const data = fs.readFileSync('../tests/test1.zap', 'utf8');
+      const data = fs.readFileSync('../../tests/test1.zap', 'utf8');
       return data  
     } catch(e) {
       console.log('Error:', e.stack);
