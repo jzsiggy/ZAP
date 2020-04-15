@@ -202,30 +202,33 @@ class Interpreter {
     this.statementSeparator = new StatementSeparator(this.environment);
     this.statementSeparator.load(this.lexer.tokens);
     this.statementSeparator.separateStatements()
+
     this.statements = this.statementSeparator.statements;
   };
 };
 
 
-const interpreter = new Interpreter(
-"\
-2;                 \n\
-show 3+4;                 \n\
-{                 \n\
-show 4 - 1 + 3 * (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)));                 \n\
-  {               \n\
-  3 + 8;               \n\
-  show 5 ;              \n\
-                 \n\
-                 \n\
-  };               \n\
-                 \n\
-                 \n\
-};                 \n\
-@a + 4 - 1 + 3 + (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)));                 \n\
-                        \n\
-show a;                        \n\
-"
-);
+// const interpreter = new Interpreter(
+// "\
+// 2;                 \n\
+// show 3+4;                 \n\
+// {                 \n\
+// show 4 - 1 + 3 * (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)));                 \n\
+//   {               \n\
+//   3 + 8;               \n\
+//   show 5 ;              \n\
+//                  \n\
+//                  \n\
+//   };               \n\
+//                  \n\
+//                  \n\
+// };                 \n\
+// @a + 4 - 1 + 3 + (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)));                 \n\
+//                         \n\
+// show a;                        \n\
+// "
+// );
 
-// console.log(interpreter.statements)
+module.exports = {
+  Interpreter,
+};
