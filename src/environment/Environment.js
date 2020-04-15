@@ -10,6 +10,16 @@ class Environment {
     this.values[identifier] = value;
   };
 
+  assign(identifier, value) {
+    if (!Object.keys(this.values).includes(identifier)) {
+      this.errorHandler.throw(
+        `UNDEFINED VARIABLE ${identifier}`
+      );
+    } else {
+      this.values[identifier] = value;
+    };
+  };
+
   get(identifier) {
     if (Object.keys(this.values).includes(identifier)) {
       return this.values[identifier];
