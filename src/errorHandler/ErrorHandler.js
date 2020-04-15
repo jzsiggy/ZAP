@@ -4,7 +4,7 @@ class ErrorHandler {
     if (line && col) {
       err = `\n\n${msg} -- ln: ${line}, col: ${col}\n`
     } else {
-      err = `${msg} -- EOF`
+      err = `\n\n${msg}\n`
     };
     try {
       throw new Error(err);

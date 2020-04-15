@@ -410,7 +410,7 @@ class Parser {
       group.push(this.currentToken);
       this.next();
       if (!this.currentToken) {
-        this.errorHandler.throw(`EXPECTED ')' AFTER EXPRESSION`, null, null);
+        this.errorHandler.throw(`EXPECTED ')' AFTER EXPRESSION -- EOF`);
       };
     };
     let node = new Group(group);
@@ -548,7 +548,7 @@ module.exports = {
 
 // console.time('parsing')
 
-// const lexer = new Lexer("1 + show");
+// const lexer = new Lexer("1 = 2");
 // const parser = new Parser(lexer.tokens);
 // result = parser.parse();
 // console.log(result);

@@ -42,7 +42,8 @@ class StatementSeparator {
     this.tokens = tokens;
     this.index = 0;
     this.currentToken = this.currentToken = this.tokens[this.index];
-    
+    this.previousToken = null;
+
     this.statements = [];
     this.currentStatement = [];
 
@@ -71,6 +72,8 @@ class StatementSeparator {
   next() {
     this.index++;
     this.currentToken = this.tokens[this.index];
+    this.previousToken = this.tokens[this.index-1];
+
     this.checkBrace();
   };
 
@@ -128,11 +131,12 @@ class StatementSeparator {
         this.next();
       };
     };
+
     if (this.currentStatement.length) {
       this.errorHandler.throw(
         'YOU MUST HAVE FORGOTTEN A SEMICOLON',
-        null,
-        null
+        this.previousToken.line,
+        this.previousToken.col
       );
     };
   };
@@ -146,7 +150,19 @@ class Interpreter {
 
 
 
-const lexer = new Lexer("{ 1; show 34; };1; 1+5; show 3; @a = 6;");
+const lexer = new Lexer("   \
+show 2+3;                   \n\
+2 + 3;                      \n\
+{                           \n\
+  1*2;                      \n\
+  show (34 / 4 * (34 -6));  \n\
+  {                         \n\
+    1-3;                    \n\
+  };                        \n\
+};                          \n\
+@a = 5;                     \n\
+");
+
 const statementSeparator = new StatementSeparator(lexer.tokens);
 const { statements } = statementSeparator;
 
