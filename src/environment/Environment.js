@@ -19,8 +19,8 @@ class Environment {
         `UNDEFINED VARIABLE ${identifier}`
       );
     };
-  }
-}l
+  };
+};
 
 module.exports = {
   Environment,

@@ -1,13 +1,14 @@
 const { ErrorHandler } = require('../errorHandler/ErrorHandler');
-const { Lexer } = require('../lexer/lexer');
 
 class Binary {
-  constructor(leftNode, operator, rightNode) {
-    this.leftNodeParser = new Parser(leftNode);
-    this.rightNodeParser = new Parser(rightNode);
+  constructor(leftNode, operator, rightNode, parser) {
+    this.parser = parser;
 
-    this.leftNode = this.leftNodeParser.parse();
-    this.rightNode = this.rightNodeParser.parse();
+    this.parser.load(leftNode);
+    this.leftNode = this.parser.parse();
+
+    this.parser.load(rightNode);
+    this.rightNode = this.parser.parse();
     
     this.operator = operator.type;
     this.value = this.operate();
@@ -51,8 +52,10 @@ class Binary {
 };
 
 class Unary {
-  constructor(operator , expression) {
-    this.parser = new Parser(expression);
+  constructor(operator , expression, parser) {
+    this.parser = parser;
+    this.parser.load(expression);
+
     this.operator = operator;
     this.expression = expression;
     this.value = this.operate();
@@ -82,11 +85,23 @@ class Literal {
 };
 
 class Group {
-  constructor(expression) {
-    this.parser = new Parser(expression);
+  constructor(expression, parser) {
+    this.parser = parser;
+    this.parser.load(expression);
     this.value = this.parser.parse().value;
   };
 };
+
+class Variable {
+  constructor(token, environment) {
+    this.identifier = token.value;
+    this.environment = environment;
+    this.value = this.fetchValue();
+  }
+  fetchValue() {
+    return this.environment.get(this.identifier);
+  };
+}
 
 /*
                  ::::{[{[ --> THE PARSING LOGIC <-- ]}]}::::
@@ -215,18 +230,23 @@ class Group {
 */
 
 class Parser {
-  constructor(tokens) {
+  constructor(environment) {
+    this.environment = environment;
+
     this.errorHandler = new ErrorHandler();
-    this.rawExpression = tokens;
-    this.index = this.rawExpression.length - 1;
-    this.previousToken = this.rawExpression[this.index - 1];
-    this.currentToken = this.rawExpression[this.index];
+    this.rawExpression = null;
+    this.index = null;
+    this.previousToken = null;
+    this.currentToken = null;
     this.nextToken = null;
     this.openingParen = 0;
     this.closingParen = 0;
-
-    this.checkParenthese();
   };
+
+  load(tokens) {
+    this.rawExpression = tokens;
+    this.resetToEnd();
+  }
 
   reset() {
     this.index = 0;
@@ -379,7 +399,8 @@ class Parser {
     let node = new Binary(
       leftNode,
       this.currentToken,
-      rightNode
+      rightNode,
+      this
     )
     return node;
   }
@@ -399,6 +420,7 @@ class Parser {
     let node = new Unary(
       this.currentToken,
       expr,
+      this,
     );
     return node;
   };
@@ -413,7 +435,10 @@ class Parser {
         this.errorHandler.throw(`EXPECTED ')' AFTER EXPRESSION -- EOF`);
       };
     };
-    let node = new Group(group);
+    let node = new Group(
+      group,
+      this
+      );
     return node;
   };
 
@@ -424,8 +449,13 @@ class Parser {
   };
 
   handleVariable() {
-    console.log("You've reached a Variable declaration")
-  }
+    // console.log('isVariable')
+    let node = new Variable(
+      this.currentToken, 
+      this.environment
+    );
+    return node;
+  };
 
   handleReserved() {
     this.errorHandler.throw(
@@ -546,10 +576,16 @@ module.exports = {
   Parser,
 };
 
-// console.time('parsing')
 
-// const lexer = new Lexer("1 = 2");
-// const parser = new Parser(lexer.tokens);
+
+// const { Environment } = require('../environment/Environment');
+// const { Lexer } = require('../lexer/lexer');
+
+// console.time('parsing')
+// const env = new Environment();
+// const lexer = new Lexer("1");
+// const parser = new Parser(env);
+// parser.load(lexer.tokens);
 // result = parser.parse();
 // console.log(result);
 

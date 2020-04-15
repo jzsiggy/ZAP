@@ -1,21 +1,25 @@
 const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 const { Lexer } = require('../lexer/Lexer');
 const { Parser } = require('../parser/Parser');
+const { Environment } = require('../environment/Environment');
 
 class BlockStmt {
-  constructor(tokens) {
+  constructor(tokens, statementSeparator) {
     this.tokens = tokens;
-    this.statementSeparator = new StatementSeparator(tokens);
+    this.statementSeparator = statementSeparator;
+    this.statementSeparator.load(tokens);
+    this.statementSeparator.separateStatements();
     this.statements = this.statementSeparator.statements;
   };
 };
 
 class PrintStmt {
-  constructor(expression) {
+  constructor(expression, parser) {
     this.expression = expression;
-    this.parser = new Parser(this.expression);
+    this.parser = parser;
+    this.parser.load(this.expression);
     this.value = this.parser.parse().value;
-    // this.execute();
+    this.execute();
   };
   execute() {
     console.log(this.value);
@@ -23,25 +27,54 @@ class PrintStmt {
 }
 
 class ExprStmt {
-  constructor(expression) {
+  constructor(expression, parser) {
     this.expression = expression;
-    this.parser = new Parser(this.expression);
+    this.parser = parser;
+    this.parser.load(this.expression);
     this.value = this.parser.parse().value;
   }
 }
 
 class DeclarationStmt {
-  constructor(tokens) {
-    this.value=tokens;
+  constructor(statement, environment, parser) {
+    this.errorHandler = new ErrorHandler();
+    this.statement = statement;
+    this.environment = environment;
+    this.parser = parser;
+    
+    this.identifier = null;
+    this.value = null;
+
+    this.execute()
+  };
+  
+  execute() {
+    if (this.statement[1].type == 'IDENTIFIER') {
+      this.identifier = this.statement[1].value;
+      if (this.statement[2].type == 'EQUALS') {
+        this.parser.load(this.statement.slice(2));
+        this.value = this.parser.parse().value;
+        return this.environment.define(this.identifier, this.value);
+      };
+    }
+
+    this.errorHandler.throw(
+      'INVALID DECLARATION STATEMENT',
+      this.statement[0].line,
+      this.statement[0].col
+    );
   };
 };
 
 class StatementSeparator {
-  constructor (tokens) {
+  constructor (environment) {
+    this.environment = environment
+    this.parser = new Parser(this.environment);
     this.errorHandler = new ErrorHandler();
-    this.tokens = tokens;
-    this.index = 0;
-    this.currentToken = this.currentToken = this.tokens[this.index];
+
+    this.tokens = null;
+    this.index = null;
+    this.currentToken = null;
     this.previousToken = null;
 
     this.statements = [];
@@ -49,10 +82,16 @@ class StatementSeparator {
 
     this.openingBrace = 0;
     this.closingBrace = 0;
+  };
+
+  load(tokens) {
+    this.tokens = tokens;
+    this.index = 0;
+    this.currentToken = this.currentToken = this.tokens[this.index];
+    this.previousToken = null;
 
     this.checkBrace();
-    this.separateStatements();
-  };
+  }
 
   resetCurrentStatement() {
     this.currentStatement = [];
@@ -87,21 +126,34 @@ class StatementSeparator {
 
   parseStatement(statement) {
     if (statement[0].type == 'LBRACE') {
-      let stmt = new BlockStmt(statement.slice(1, -1));
+      let stmt = new BlockStmt(
+        statement.slice(1, -1),
+        this
+      );
       // console.log(stmt);
       return stmt;
     }
     if (statement[0].type == 'SHOW') {
-      let stmt = new PrintStmt(statement.slice(1));
+      let stmt = new PrintStmt(
+        statement.slice(1),
+        this.parser
+      );
       // console.log(stmt);
       return stmt;
     };
-    if (statement[0].type == 'SYMBOLSETTER') {
-      let stmt = new DeclarationStmt(statement);
+    if (statement[0].type == 'DECLARATOR') {
+      let stmt = new DeclarationStmt(
+        statement,
+        this.environment,
+        this.parser
+      );
       // console.log(stmt);
       return stmt;
     };
-    let stmt = new ExprStmt(statement);
+    let stmt = new ExprStmt(
+      statement,
+      this.parser
+    );
     // console.log(stmt);
     return stmt;
   };
@@ -143,29 +195,37 @@ class StatementSeparator {
 };
 
 class Interpreter {
-  constructor(statements) {
-    this.statements = statements;
+  constructor(input) {
+    this.environment = new Environment();
+    
+    this.lexer = new Lexer(input);
+    this.statementSeparator = new StatementSeparator(this.environment);
+    this.statementSeparator.load(this.lexer.tokens);
+    this.statementSeparator.separateStatements()
+    this.statements = this.statementSeparator.statements;
   };
 };
 
 
+const interpreter = new Interpreter(
+"\
+2;                 \n\
+show 3+4;                 \n\
+{                 \n\
+show 4 - 1 + 3 * (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)));                 \n\
+  {               \n\
+  3 + 8;               \n\
+  show 5 ;              \n\
+                 \n\
+                 \n\
+  };               \n\
+                 \n\
+                 \n\
+};                 \n\
+@a + 4 - 1 + 3 + (8 - 7 + (5 + 9) - (3 + 53)) - (1 * (4 + (-9 * 8)));                 \n\
+                        \n\
+show a;                        \n\
+"
+);
 
-const lexer = new Lexer("   \
-show 2+3;                   \n\
-2 + 3;                      \n\
-{                           \n\
-  1*2;                      \n\
-  show (34 / 4 * (34 -6));  \n\
-  {                         \n\
-    1-3;                    \n\
-  };                        \n\
-};                          \n\
-@a = 5;                     \n\
-");
-
-const statementSeparator = new StatementSeparator(lexer.tokens);
-const { statements } = statementSeparator;
-
-const interpreter = new Interpreter(statements);
-
-console.log(interpreter.statements)
+// console.log(interpreter.statements)

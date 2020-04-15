@@ -24,7 +24,7 @@ const tokenList = {
   "QUOTE" : (input) => input == "'",
   "DOT" : (input) => input =='.',
 
-  "SYMBOLSETTER" : (input) => input == '@',
+  "DECLARATOR" : (input) => input == '@',
 
   "NUMBER" : (input) => /^[0-9]+$/.test(input),
   "LETTER" : (input) => /^[a-zA-Z]+$/.test(input),
