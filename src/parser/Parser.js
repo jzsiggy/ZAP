@@ -205,47 +205,72 @@ class Parser {
     return this.currentToken.type == 'SEMICOLON';
   };
 
-  handleStatement(statement) {
-    if (statement[0].type == 'LBRACE') {
-      let stmt = new BlockStmt(
-        statement.slice(1, -1),
-        new Environment(this.environment),
-      );
-      // console.log(stmt);
-      return stmt;
-    }
-    if (statement[0].type == 'SHOW') {
-      let stmt = new PrintStmt(
-        statement.slice(1),
-        this.evaluator
-      );
-      // console.log(stmt);
-      return stmt;
-    };
-    if (statement[0].type == 'DECLARATOR') {
-      let stmt = new DeclarationStmt(
-        statement,
-        this.environment,
-        this.evaluator
-      );
-      // console.log(stmt);
-      return stmt;
-    };
-    if (statement[0].type == 'IF') {
-      let stmt = new IfStmt(
-        statement,
-        this.evaluator,
-        this.environment
-      );
-      // console.log(stmt);
-      return stmt;
-    };
+  handleBlock(statement) {
+    let stmt = new BlockStmt(
+      statement.slice(1, -1),
+      new Environment(this.environment),
+    );
+    // console.log(stmt);
+    return stmt;
+  };
+
+  handlePrint(statement) {
+    let stmt = new PrintStmt(
+      statement.slice(1),
+      this.evaluator
+    );
+    // console.log(stmt);
+    return stmt;
+  };
+
+  handleDeclaration(statement) {
+    let stmt = new DeclarationStmt(
+      statement,
+      this.environment,
+      this.evaluator
+    );
+    // console.log(stmt);
+    return stmt;
+  };
+
+  handleIf(statement) {
+    let stmt = new IfStmt(
+      statement,
+      this.evaluator,
+      this.environment
+    );
+    // console.log(stmt);
+    return stmt;
+  };
+
+  handleExpression(statement) {
     let stmt = new ExprStmt(
       statement,
       this.evaluator,
     );
     // console.log(stmt);
     return stmt;
+  };
+
+
+  handleStatement(statement) {
+    // console.log(statement);
+    if (statement[0].type == 'LBRACE') {
+      return this.handleBlock(statement)
+    };
+
+    if (statement[0].type == 'SHOW') {
+      return this.handlePrint(statement);
+    };
+
+    if (statement[0].type == 'DECLARATOR') {
+      return this.handleDeclaration(statement);
+    };
+
+    if (statement[0].type == 'IF') {
+      return this.handleIf(statement);
+    };
+    return this.handleExpression(statement);
   };
 
   parse() {
