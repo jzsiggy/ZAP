@@ -92,10 +92,10 @@ class IfStmt {
     this.evaluator.load(this.expression);
     this.value = this.evaluator.evaluate().value;
 
-    console.log(this.expression);
-    console.log(this.value);
-    console.log(this.thenBlock);
-    console.log(this.elseBlock);
+    // console.log(this.expression);
+    // console.log(this.value);
+    // console.log(this.thenBlock);
+    // console.log(this.elseBlock);
 
     this.execute();
   };
