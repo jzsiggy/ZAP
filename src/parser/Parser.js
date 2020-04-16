@@ -77,6 +77,73 @@ class DeclarationStmt {
   };
 };
 
+class IfStmt {
+  constructor(statement, evaluator, environment) {
+    this.evaluator = evaluator;
+    this.statement = statement;
+    this.parser = new Parser(environment);
+
+    this.expression = [];
+    this.thenBlock = [];
+    this.elseBlock = null;
+
+    this.splitStmt();
+
+    this.evaluator.load(this.expression);
+    this.value = this.evaluator.evaluate().value;
+
+    console.log(this.expression);
+    console.log(this.value);
+    console.log(this.thenBlock);
+    console.log(this.elseBlock);
+
+    this.execute();
+  };
+
+  execute() {
+    if (!!this.value) {
+      this.parser.load(this.thenBlock);
+      this.parser.parse();
+    };
+    if (!this.value) {
+      if (this.elseBlock) {
+        this.parser.load(this.elseBlock);
+        this.parser.parse();
+      };
+    };
+  };
+
+  splitStmt() {
+    let i = 1;
+    while (this.statement[i]['type'] != "LBRACE") {
+      this.expression.push(this.statement[i]);
+      i++;
+    };
+
+    while (this.statement[i]['type'] != "RBRACE") {
+      this.thenBlock.push(this.statement[i]);
+      i++;
+    };
+    this.thenBlock.push(this.statement[i]);
+    this.thenBlock.push({
+      type: 'SEMICOLON', 
+      value: ';'
+    });
+
+    i++;
+
+    if (this.statement[i]) {
+      if (this.statement[i]['type'] == "ELSE") {
+        this.elseBlock = this.statement.slice(i+1);
+        this.elseBlock.push({
+          type: 'SEMICOLON', 
+          value: ';'
+        });
+      };
+    };
+  };
+};
+
 class Parser {
   constructor (environment) {
     this.environment = environment
@@ -164,9 +231,18 @@ class Parser {
       // console.log(stmt);
       return stmt;
     };
+    if (statement[0].type == 'IF') {
+      let stmt = new IfStmt(
+        statement,
+        this.evaluator,
+        this.environment
+      );
+      // console.log(stmt);
+      return stmt;
+    };
     let stmt = new ExprStmt(
       statement,
-      this.evaluator
+      this.evaluator,
     );
     // console.log(stmt);
     return stmt;

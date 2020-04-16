@@ -38,7 +38,9 @@ const reserved = {
   "while" : 'WHILE',
   "return" : 'RETURN',
   "show" : "SHOW",
-}
+  "if" : "IF",
+  "else" : "ELSE",
+};
 
 module.exports = {
   tokenList,
