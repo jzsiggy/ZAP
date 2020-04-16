@@ -1,9 +1,13 @@
 const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 
 class Environment {
-  constructor() {
+  constructor(enclosing) {
     this.errorHandler = new ErrorHandler();
     this.values = {};
+    this.enclosing = null;
+    if (enclosing) {
+      this.enclosing = enclosing;
+    };
   };
 
   define(identifier, value) {
@@ -11,20 +15,36 @@ class Environment {
   };
 
   assign(identifier, value) {
-    if (!Object.keys(this.values).includes(identifier)) {
-      this.errorHandler.throw(
-        `UNDEFINED VARIABLE ${identifier}`
-      );
-    } else {
+    if (!Object.keys(this.values).includes(identifier))
+    {
+      if (this.enclosing) 
+      {
+        return this.enclosing.assign(identifier, value);
+      } 
+      else 
+      {
+        this.errorHandler.throw(
+          `UNDEFINED VARIABLE ${identifier}`
+        );
+      }
+    } 
+    else 
+    {
       this.values[identifier] = value;
     };
   };
 
   get(identifier) {
-    if (Object.keys(this.values).includes(identifier)) {
+    if (Object.keys(this.values).includes(identifier)) 
+    {
       return this.values[identifier];
     }
-    else {
+    else 
+    {
+      if (this.enclosing) 
+      {
+        return this.enclosing.get(identifier);
+      };
       this.errorHandler.throw(
         `UNDEFINED VARIABLE ${identifier}`
       );

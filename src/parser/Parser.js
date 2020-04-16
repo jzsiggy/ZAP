@@ -1,5 +1,6 @@
 const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 const { Evaluator } = require('../evaluator/Evaluator');
+const { Environment } = require('../environment/Environment');
 
 class BlockStmt {
   constructor(tokens, environment) {
@@ -141,7 +142,7 @@ class Parser {
     if (statement[0].type == 'LBRACE') {
       let stmt = new BlockStmt(
         statement.slice(1, -1),
-        this.environment
+        new Environment(this.environment),
       );
       // console.log(stmt);
       return stmt;
