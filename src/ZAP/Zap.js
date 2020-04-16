@@ -5,15 +5,27 @@ class Zap {
   constructor() {
     this.input = this.fetchInput();
     this.interpreter = new Interpreter(this.input);
-    console.log(this.interpreter.statements);
+    // console.log(this.interpreter.statements);
   };
 
   fetchInput() {
-    try {
-      const data = fs.readFileSync('../../tests/test1.zap', 'utf8');
-      return data  
-    } catch(e) {
-      console.log('Error:', e.stack);
+    let file = process.argv[2];
+    if (!file) 
+    {
+      console.log('USAGE -- [ node Zap.js <filename> ]');
+    }
+    else
+    {
+      try 
+      {
+        const data = fs.readFileSync(file, 'utf8');
+        return data  
+      } 
+      catch(e) 
+      {
+        console.log('USAGE -- [ node Zap.js <filename> ]');
+        console.log('Error:', e.stack);
+      }
     }
   };
 };
