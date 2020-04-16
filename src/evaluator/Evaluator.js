@@ -3,9 +3,10 @@ const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 class Assignment {
   constructor(token, expression, evaluator, environment) {
     this.identifier = token.value;
+    this.expression = expression;
+
     this.evaluator = evaluator;
     this.environment = environment;
-    this.expression = expression;
     this.evaluator.load(expression);
     this.value = this.evaluator.evaluate().value;
     this.operate();
