@@ -8,6 +8,9 @@ class Assignment {
     this.expression = expression;
     this.evaluator.load(expression);
     this.value = this.evaluator.evaluate().value;
+    this.operate();
+  };
+  operate() {
     this.environment.assign(this.identifier, this.value);
   };
 };
@@ -407,6 +410,7 @@ class Evaluator {
   }
 
   handleAssignment() {
+    // console.log('isAssignment')
     let assigned = this.rawExpression.slice(0, this.index);
     let expression = this.rawExpression.slice(this.index+1);
 
