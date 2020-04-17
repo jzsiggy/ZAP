@@ -3,23 +3,40 @@ const { Evaluator } = require('../evaluator/Evaluator');
 const { Environment } = require('../environment/Environment');
 
 class BlockStmt {
-  constructor(tokens, environment) {
-    this.tokens = tokens;
+  constructor(statement, environment) {
+    this.statement = statement;
+    this.body = this.fetchBody();
     this.parser = new Parser(environment);
-    this.parser.load(this.tokens);
+    this.execute()
+  };
+
+  fetchBody() {
+    return this.statement.slice(1, -1);
+  };
+
+  execute() {
+    this.parser.load(this.body);
     this.statements = this.parser.parse();
   };
 };
 
 class PrintStmt {
-  constructor(expression, evaluator) {
-    this.expression = expression;
+  constructor(statement, evaluator) {
+    this.statement = statement;
+    this.expression = this.fetchExpression();
     this.evaluator = evaluator;
-    this.evaluator.load(this.expression);
-    this.value = this.evaluator.evaluate().value;
+    this.value = null;
     this.execute();
   };
+
+  fetchExpression() {
+    return this.statement.slice(1);
+  };
+
   execute() {
+    this.evaluator.load(this.expression);
+    this.value = this.evaluator.evaluate().value;
+
     if (this.value != undefined) {
       console.log(this.value);
     } else {
@@ -29,8 +46,8 @@ class PrintStmt {
 };
 
 class ExprStmt {
-  constructor(expression, evaluator) {
-    this.expression = expression;
+  constructor(statement, evaluator) {
+    this.expression = statement;
     this.evaluator = evaluator;
     this.evaluator.load(this.expression);
     this.value = this.evaluator.evaluate().value;
@@ -38,41 +55,178 @@ class ExprStmt {
 }
 
 class DeclarationStmt {
-  constructor(identifier, value, environment) {
+  constructor(statement, evaluator, environment) {
+    this.errorHandler = new ErrorHandler();
+    this.statement = statement;
+    this.evaluator = evaluator;
     this.environment = environment;
-    
-    this.identifier = identifier;
-    this.value = value;
 
+    this.value = null;
+    this.identifier = statement[1].value;
     this.execute()
   };
+
+  fetchValue() {
+    let value = null;
+    if (this.statement[2]) {
+      if (this.statement[2].type == 'EQUALS') {
+        let expression = this.statement.slice(3);
+        this.evaluator.load(expression);
+        value = this.evaluator.evaluate().value;
+        if (value == undefined) {
+          this.errorHandler.throw(
+            'INVALID DECLARATION STATEMENT',
+            this.statement[0].line,
+            this.statement[0].col
+          );
+        };
+      }
+      else {
+        this.errorHandler.throw(
+          'INVALID DECLARATION STATEMENT',
+          this.statement[0].line,
+          this.statement[0].col
+        );
+      };
+    };
+    return value;
+  };
+    
   
   execute() {
+      this.value = this.fetchValue();
       return this.environment.define(this.identifier, this.value);
   };
 };
 
 class IfStmt {
-  constructor(expression, thenBlock, elseBlock, evaluator, environment) {
+  constructor(statement, evaluator, environment) {
     this.evaluator = evaluator;
     this.parser = new Parser(environment);
+    this.errorHandler = new ErrorHandler();
 
-    this.expression = expression;
-    this.thenBlock = thenBlock;
-    this.elseBlock = elseBlock;
+    this.statement = statement;
 
-    this.evaluator.load(this.expression);
-    this.approve = this.evaluator.evaluate().value;
+    this.expression = [];
+    this.thenBlock = [];
+    this.elseBlock = null;
+
+    this.index = 1;
+    this.currentToken = this.statement[this.index];
+    this.prevToken = null;
+
+    this.openingBrace = 0;
+    this.closingBrace = 0;
 
     this.execute();
   };
 
+  next() {
+    this.prevToken = this.statement[this.index];
+    this.index++;
+    this.currentToken = this.statement[this.index];
+    this.checkBrace();
+  };
+
+  checkBrace() {
+    if (this.currentToken) {
+      if (this.currentToken.type == 'LBRACE') {
+        this.openingBrace++;
+      };
+      if (this.currentToken.type == 'RBRACE') {
+        this.closingBrace++;
+      };
+    };
+  };
+
+  isInBlock() {
+    return this.closingBrace != this.openingBrace;
+  };
+
+  splitBlock() {
+    while (!this.isInBlock()) {
+      this.expression.push(this.currentToken);
+      this.next();
+      if (!this.currentToken) {
+        this.errorHandler.throw(
+          `EXPECTED '{' AFTER EXPRESSION`,
+          this.prevToken.line,
+          this.prevToken.col
+        );
+      };
+    };
+
+    while (this.isInBlock()) {
+      this.thenBlock.push(this.currentToken);
+      this.next();
+      if (!this.currentToken) {
+        this.errorHandler.throw(
+          `EXPECTED '}' AFTER THEN BLOCK`,
+          this.prevToken.line,
+          this.prevToken.col
+        );
+      }
+    };
+    this.thenBlock.push(this.currentToken);
+    this.thenBlock.push({
+      type: 'SEMICOLON', 
+      value: ';'
+    });
+    this.next();
+
+    if (this.currentToken) {
+      if (this.currentToken.type == 'ELSE') {
+        this.next();
+        if (this.isInBlock()) {
+          this.elseBlock = [];
+
+          while (this.isInBlock()) {
+            this.elseBlock.push(this.currentToken);
+            this.next();
+            if (!this.currentToken) {
+              this.errorHandler.throw(
+                `EXPECTED '}' AFTER ELSE BLOCK`,
+                this.prevToken.line,
+                this.prevToken.col
+              );
+            };
+          };
+          this.elseBlock.push(this.currentToken);
+          this.elseBlock.push({
+            type: 'SEMICOLON', 
+            value: ';'
+          });
+          this.next();
+        }
+        else {
+          this.errorHandler.throw(
+            `UNABLE TO PARSE ELSE STATEMENT`,
+            this.prevToken.line,
+            this.prevToken.col
+          );
+        };
+      }
+      else {
+        this.errorHandler.throw(
+          `UNEXPECTED KEYWORD AFTER IF STATEMENT`,
+          this.prevToken.line,
+          this.prevToken.col
+        );
+      };
+    };
+  };
+
   execute() {
-    if (!!this.approve) {
+    this.splitBlock();
+
+    this.evaluator.load(this.expression);
+    let approve = this.evaluator.evaluate().value;
+
+    if (approve) {
       this.parser.load(this.thenBlock);
       this.parser.parse();
     };
-    if (!this.approve) {
+    if (!approve) {
       if (this.elseBlock) {
         this.parser.load(this.elseBlock);
         this.parser.parse();
@@ -82,27 +236,99 @@ class IfStmt {
 };
 
 class WhileStmt {
-  constructor(expression, body, evaluator, environment) {
-    this.expression = expression;
-    this.body = body;
+  constructor(statement, evaluator, environment) {
     this.evaluator = evaluator;
-    this.environment = environment;
-    this.parser = new Parser(this.environment);
+    this.parser = new Parser(environment);
+    this.errorHandler = new ErrorHandler();
+
+    this.statement = statement;
+
+    this.expression = [];
+    this.body = [];
+
+    this.index = 1;
+    this.currentToken = this.statement[this.index];
+    this.prevToken = null;
+
+    this.openingBrace = 0;
+    this.closingBrace = 0;
 
     this.execute();
   };
 
-  execute() {
-    this.evaluator.load(this.expression);
-    this.parser.load(this.body);
+  next() {
+    this.prevToken = this.statement[this.index];
+    this.index++;
+    this.currentToken = this.statement[this.index];
+    this.checkBrace();
+  };
 
-    while ( !! this.evaluator.evaluate().value ) {
-      this.parser.parse();
+  checkBrace() {
+    if (this.currentToken) {
+      if (this.currentToken.type == 'LBRACE') {
+        this.openingBrace++;
+      };
+      if (this.currentToken.type == 'RBRACE') {
+        this.closingBrace++;
+      };
+    };
+  };
 
-      this.evaluator.load(this.expression);
-      this.parser.load(this.body);
+  isInBlock() {
+    return this.closingBrace != this.openingBrace;
+  };
+
+  splitBlock() {
+    while (!this.isInBlock()) {
+      this.expression.push(this.currentToken);
+      this.next();
+      if (!this.currentToken) {
+        this.errorHandler.throw(
+          `EXPECTED '{' AFTER EXPRESSION`,
+          this.prevToken.line,
+          this.prevToken.col
+        );
+      };
     };
 
+    while (this.isInBlock()) {
+      this.body.push(this.currentToken);
+      this.next();
+      if (!this.currentToken) {
+        this.errorHandler.throw(
+          `EXPECTED '}' AFTER BODY OF WHILE`,
+          this.prevToken.line,
+          this.prevToken.col
+        );
+      }
+    };
+    this.body.push(this.currentToken);
+    this.body.push({
+      type: 'SEMICOLON', 
+      value: ';'
+    });
+    this.next()
+
+    if (this.currentToken) {
+      this.errorHandler.throw(
+        `UNEXPECTED TOKEN AFTER WHILE STATEMENT`,
+        this.currentToken.line,
+        this.currentToken.col
+      );
+    };
+  };
+
+
+  execute() {
+    this.splitBlock();
+
+    this.evaluator.load(this.expression);
+
+    while (!!this.evaluator.evaluate().value) {
+      this.parser.load(this.body);
+      this.parser.parse();
+      this.evaluator.load(this.expression);
+    };
   };
 };
 
@@ -168,9 +394,8 @@ class Parser {
   };
 
   handleBlock(statement) {
-    let blockTokens = statement.slice(1, -1);
     let stmt = new BlockStmt(
-      blockTokens,
+      statement,
       new Environment(this.environment),
     );
     // console.log(stmt);
@@ -178,9 +403,8 @@ class Parser {
   };
 
   handlePrint(statement) {
-    let expression = statement.slice(1);
     let stmt = new PrintStmt(
-      expression,
+      statement,
       this.evaluator
     );
     // console.log(stmt);
@@ -188,33 +412,9 @@ class Parser {
   };
 
   handleDeclaration(statement) {
-    let value = null;
-    let identifier = statement[1].value;
-    if (statement[2]) {
-      if (statement[2].type == 'EQUALS') {
-        let expression = statement.slice(3);
-        this.evaluator.load(expression);
-        value =  this.evaluator.evaluate().value;
-        if (value == undefined) {
-          this.errorHandler.throw(
-            'INVALID DECLARATION STATEMENT',
-            statement[0].line,
-            statement[0].col
-          );
-        };
-      }
-      else {
-        this.errorHandler.throw(
-          'INVALID DECLARATION STATEMENT',
-          statement[0].line,
-          statement[0].col
-        );
-      };
-    };
-    
     let stmt = new DeclarationStmt(
-      identifier,
-      value,
+      statement,
+      this.evaluator,
       this.environment,
     );
     // console.log(stmt);
@@ -223,60 +423,8 @@ class Parser {
 
   handleIf(statement) {
     // console.log(statement);
-    let expression = [];
-    let thenBlock = [];
-    let elseBlock = null;
-
-    let i = 1;
-    while (statement[i]['type'] != "LBRACE") {
-      expression.push(statement[i]);
-      i++;
-      if (!statement[i]) {
-        this.errorHandler.throw(
-          `EXPECTED '{' AT IF STATEMENT`,
-          statement[0].line,
-          statement[0].col,
-        );
-      };
-    };
-
-    console.log(expression);
-
-    while (statement[i]['type'] != "RBRACE") {
-      thenBlock.push(statement[i]);
-      i++;
-    };
-    thenBlock.push(statement[i]);
-    thenBlock.push({
-      type: 'SEMICOLON', 
-      value: ';'
-    });
-
-    console.log(thenBlock);
-
-    i++;
-
-    if (statement[i]) {
-      if (statement[i]['type'] == "ELSE") {
-        elseBlock = statement.slice(i+1);
-        elseBlock.push({
-          type: 'SEMICOLON', 
-          value: ';'
-        });
-      }
-      else {
-        this.errorHandler.throw(
-          `UNEXPECTED KEYWORD AFTER IF STATEMENT`,
-          statement[i].line,
-          statement[i].col,
-        );
-      };
-    };
-    
     let stmt = new IfStmt(
-      expression,
-      thenBlock,
-      elseBlock,
+      statement,
       this.evaluator,
       this.environment
     );
@@ -294,42 +442,14 @@ class Parser {
   };
 
   handleWhile(statement) {
-    let expression = [];
-    let body = [];
-
-    let i = 1;
-    while (statement[i]['type'] != "LBRACE") {
-      expression.push(statement[i]);
-      i++;
-      if (!statement[i]) {
-        this.errorHandler.throw(
-          `EXPECTED '{' AT WHILE STATEMENT`,
-          statement[0].line,
-          statement[0].col,
-        );
-      };
-    };
-
-    while (statement[i]['type'] != "RBRACE") {
-      body.push(statement[i]);
-      i++;
-    };
-    body.push(statement[i]);
-    body.push({
-      type: 'SEMICOLON', 
-      value: ';'
-    });
-
     let stmt = new WhileStmt(
-      expression,
-      body,
+      statement,
       this.evaluator,
       this.environment
     );
     // console.log(stmt);
     return stmt;
   }
-
 
   handleStatement(statement) {
     // console.log(statement);
