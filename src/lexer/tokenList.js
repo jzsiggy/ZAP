@@ -12,7 +12,7 @@ const tokenList = {
   "NOT" : (input) => input == '!',
   "GREATERTHANEQUAL" : (input) => input == '>=',
   "LESSTHANEQUAL" : (input) => input == '<=',
-  "NOTEQUAL" : (input) => input == '!=',
+  "NOTEQUALTO" : (input) => input == '!=',
   "EQUALTO" : (input) => input == '==',
 
   "LPAREN" : (input) => input == '(',

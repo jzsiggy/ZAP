@@ -49,7 +49,7 @@ class Binary {
     if (this.operator == 'EQUALTO') {
       return this.leftNode.value == this.rightNode.value;
     };
-    if (this.operator == 'NOTEQUAL') {
+    if (this.operator == 'NOTEQUALTO') {
       return this.leftNode.value != this.rightNode.value;
     };
     if (this.operator == 'GREATERTHAN') {
