@@ -120,9 +120,9 @@ class Variable {
 }
 
 /*
-                 ::::{[{[ --> THE PARSING LOGIC <-- ]}]}::::
+                 ::::{[{[ --> THE EVALUATING LOGIC <-- ]}]}::::
 
-        The logic behind the parser is to create a tree of operations.
+        The logic behind the evaluator is to create a tree of operations.
       It starts by iterating through the Whole raw expression (token list),
                             from right to left,
               trying to find the operators of lowest precedence 
@@ -131,7 +131,7 @@ class Variable {
                  it becomes the first expression in the tree.
        The expressions can be of 4 types: Binary, Unary, Group or Literal.
 
-              The Parser will iterate through the raw Expression,
+             The Evaluator will iterate through the raw Expression,
                   Always trying break down bigger expressions
              into smaller ones until it works with only Primaries.
 
@@ -423,8 +423,18 @@ class Evaluator {
       );
     };
 
+    let identifier = assigned[0];
+
+    if (identifier.type != 'IDENTIFIER') {
+      this.errorHandler.throw(
+        'INVALID ASSIGNEE',
+        this.currentToken.line,
+        this.currentToken.col
+      );
+    };
+
     let node = new Assignment(
-      assigned[0],
+      identifier,
       expression,
       this,
       this.environment
@@ -659,7 +669,7 @@ class Evaluator {
     this.reset();
 
     return {
-      value : undefined
+      value : undefined,
     };
 
   };

@@ -5,12 +5,11 @@ class Zap {
   constructor() {
     this.input = this.fetchInput();
     this.interpreter = new Interpreter(this.input);
-    // console.log(this.interpreter.statements);
   };
 
   fetchInput() {
     let file = process.argv[2];
-    if (!file) 
+    if (!file)
     {
       console.log('USAGE -- [ node Zap.js <filename> ]');
     }
@@ -25,8 +24,8 @@ class Zap {
       {
         console.log('USAGE -- [ node Zap.js <filename> ]');
         console.log('Error:', e.stack);
-      }
-    }
+      };
+    };
   };
 };
 
