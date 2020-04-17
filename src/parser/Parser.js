@@ -81,6 +81,31 @@ class IfStmt {
   };
 };
 
+class WhileStmt {
+  constructor(expression, body, evaluator, environment) {
+    this.expression = expression;
+    this.body = body;
+    this.evaluator = evaluator;
+    this.environment = environment;
+    this.parser = new Parser(this.environment);
+
+    this.execute();
+  };
+
+  execute() {
+    this.evaluator.load(this.expression);
+    this.parser.load(this.body);
+
+    while ( !! this.evaluator.evaluate().value ) {
+      this.parser.parse();
+
+      this.evaluator.load(this.expression);
+      this.parser.load(this.body);
+    };
+
+  };
+};
+
 class Parser {
   constructor (environment) {
     this.environment = environment
@@ -197,6 +222,7 @@ class Parser {
   };
 
   handleIf(statement) {
+    // console.log(statement);
     let expression = [];
     let thenBlock = [];
     let elseBlock = null;
@@ -214,6 +240,8 @@ class Parser {
       };
     };
 
+    console.log(expression);
+
     while (statement[i]['type'] != "RBRACE") {
       thenBlock.push(statement[i]);
       i++;
@@ -223,6 +251,8 @@ class Parser {
       type: 'SEMICOLON', 
       value: ';'
     });
+
+    console.log(thenBlock);
 
     i++;
 
@@ -263,6 +293,43 @@ class Parser {
     return stmt;
   };
 
+  handleWhile(statement) {
+    let expression = [];
+    let body = [];
+
+    let i = 1;
+    while (statement[i]['type'] != "LBRACE") {
+      expression.push(statement[i]);
+      i++;
+      if (!statement[i]) {
+        this.errorHandler.throw(
+          `EXPECTED '{' AT WHILE STATEMENT`,
+          statement[0].line,
+          statement[0].col,
+        );
+      };
+    };
+
+    while (statement[i]['type'] != "RBRACE") {
+      body.push(statement[i]);
+      i++;
+    };
+    body.push(statement[i]);
+    body.push({
+      type: 'SEMICOLON', 
+      value: ';'
+    });
+
+    let stmt = new WhileStmt(
+      expression,
+      body,
+      this.evaluator,
+      this.environment
+    );
+    // console.log(stmt);
+    return stmt;
+  }
+
 
   handleStatement(statement) {
     // console.log(statement);
@@ -281,6 +348,11 @@ class Parser {
     if (statement[0].type == 'IF') {
       return this.handleIf(statement);
     };
+
+    if (statement[0].type == 'WHILE') {
+      return this.handleWhile(statement);
+    };
+
     return this.handleExpression(statement);
   };
 
