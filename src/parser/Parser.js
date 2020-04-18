@@ -407,7 +407,7 @@ class FunctionStmt {
 
   execute() {
     this.splitBlock();
-    const zapFunction = new ZapFunction(this.args, this.body, this.environment);
+    const zapFunction = new ZapFunction(this.identifier, this.args, this.body, this.environment);
     this.environment.define(this.identifier, zapFunction);
   };
 };

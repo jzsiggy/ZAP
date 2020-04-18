@@ -1,4 +1,5 @@
 const { ErrorHandler } = require('../errorHandler/ErrorHandler');
+const { ZapFunction } = require('../parser/ZapFunction');
 
 class Assignment {
   constructor(token, expression, evaluator, environment) {
@@ -88,6 +89,39 @@ class Unary {
     }
   };
 }
+
+class Call {
+  constructor(callee, args, evaluator, environment) {
+    this.errorHandler = new ErrorHandler();
+    this.callee = callee;
+    this.evaluator = evaluator;
+    this.args = this.evaluateArgs(args);
+    this.environment = environment;
+    this.value = this.operate();
+  };
+
+  evaluateArgs(args) {
+    let parsedArgs = [];
+    for (let arg of args) {
+      this.evaluator.load(arg);
+      let argValue = this.evaluator.evaluate().value;
+      parsedArgs.push(argValue);
+    }
+    return parsedArgs;
+  };
+
+  operate() {
+    const zapFunction = this.environment.get(this.callee.value);
+    if (!(zapFunction instanceof ZapFunction)) {
+      this.errorHandler.throw(
+        `INVALID CALLEE TYPE`,
+        this.callee.line,
+        this.callee.col,
+      );
+    };
+    return zapFunction.call(this.args);
+  };
+};
 
 class Literal {
   constructor(token) {
@@ -257,6 +291,7 @@ class Evaluator {
     this.nextToken = null;
     this.openingParen = 0;
     this.closingParen = 0;
+    this.bars = 0;
   };
 
   load(tokens) {
@@ -273,6 +308,7 @@ class Evaluator {
     this.closingParen = 0;
 
     this.checkParenthese();
+    this.checkBar();
   };
 
   resetToEnd() {
@@ -284,6 +320,7 @@ class Evaluator {
     this.closingParen = 0;
 
     this.checkParenthese();
+    this.checkBar();
   };
 
   next() {
@@ -293,6 +330,7 @@ class Evaluator {
     this.nextToken = this.rawExpression[this.index+1];
     
     this.checkParenthese();
+    this.checkBar();
   };
 
   prev() {
@@ -302,6 +340,7 @@ class Evaluator {
     this.nextToken = this.rawExpression[this.index+1];
     
     this.checkParenthese();
+    this.checkBar();
   };
 
   checkParenthese() {
@@ -315,8 +354,16 @@ class Evaluator {
     };
   };
 
+  checkBar() {
+    if (this.currentToken) {
+      if (this.currentToken.type == "BAR") {
+        this.bars++;
+      };
+    };
+  };
+
   isInGroup() {
-    return (this.openingParen != this.closingParen);
+    return (this.openingParen != this.closingParen) || (this.bars % 2 != 0);
   }
 
   isOperator(token) {
@@ -484,6 +531,51 @@ class Evaluator {
     return node;
   };
 
+  handleCall() {
+    let callee = this.previousToken;
+    let args = [];
+    let currentArgument = [];
+
+    this.next();
+    if (!this.currentToken) {
+      this.errorHandler.throw(
+        `UNABLE TO PARSE CALL EXPRESSION`,
+        this.previousToken.line,
+        this.previousToken.col
+      );
+    }
+
+    while (this.currentToken.type != 'BAR') {
+      if (this.currentToken.type != 'COMMA') {
+        currentArgument.push(this.currentToken);
+      } else {
+        args.push(currentArgument);
+        currentArgument = [];
+      };
+      this.next();
+      if (!this.currentToken) {
+        this.errorHandler.throw(
+          `EXPECTED '|' after argument list`,
+          this.previousToken.line,
+          this.previousToken.col
+        )
+      };
+    };
+
+    if (currentArgument.length) {
+      args.push(currentArgument);
+      currentArgument = [];
+    }
+    
+    let node = new Call(
+      callee,
+      args,
+      this,
+      this.environment,
+    )
+    return node;
+  };
+
   handleOpenParen() {
     // console.log('isGroup')
     let group = []
@@ -638,6 +730,14 @@ class Evaluator {
         if (!this.isInGroup()) {
           return this.handleUnary();
         };
+      };
+      this.next();
+    };
+    this.reset();
+
+    while (this.currentToken) {
+      if (this.currentToken.type == 'BAR') {
+        return this.handleCall();
       };
       this.next();
     };
