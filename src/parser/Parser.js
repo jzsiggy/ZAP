@@ -393,9 +393,9 @@ class FunctionStmt {
     }
     this.next();
 
-    if (!this.currentToken || this.currentToken.type != 'EQUALS') {
+    if (!this.currentToken || this.currentToken.type != 'FATARROW') {
       this.errorHandler.throw(
-        `EXPECTED '=' AFTER FN DECLARATION`,
+        `EXPECTED '=>' AFTER FN DECLARATION`,
         this.prevToken.line,
         this.prevToken.col
       );
@@ -407,9 +407,8 @@ class FunctionStmt {
 
   execute() {
     this.splitBlock();
-    const zapFunction = new ZapFunction(this.args, this.body);
+    const zapFunction = new ZapFunction(this.args, this.body, this.environment);
     this.environment.define(this.identifier, zapFunction);
-    // console.log(this.environment);
   };
 };
 

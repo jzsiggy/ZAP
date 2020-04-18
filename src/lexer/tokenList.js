@@ -15,6 +15,8 @@ const tokenList = {
   "NOTEQUALTO" : (input) => input == '!=',
   "EQUALTO" : (input) => input == '==',
 
+  "FATARROW" : (input) => input == '=>',
+
   "LPAREN" : (input) => input == '(',
   "RPAREN" : (input) => input == ')',
   "LBRACE" : (input) => input == '{',
