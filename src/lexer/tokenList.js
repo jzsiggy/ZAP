@@ -20,6 +20,9 @@ const tokenList = {
   "LBRACE" : (input) => input == '{',
   "RBRACE" : (input) => input == '}',
 
+  "BAR" : (input) => input == '|',
+  "COMMA" : (input) => input == ',',
+
   "SEMICOLON" : (input) => input ==';',
   "QUOTE" : (input) => input == "'",
   "DOT" : (input) => input =='.',
@@ -40,6 +43,7 @@ const reserved = {
   "show" : "SHOW",
   "if" : "IF",
   "else" : "ELSE",
+  "fn" : "FUNCTION",
 };
 
 module.exports = {

@@ -1,6 +1,7 @@
 const { ErrorHandler } = require('../errorHandler/ErrorHandler');
 const { Evaluator } = require('../evaluator/Evaluator');
 const { Environment } = require('../environment/Environment');
+const { ZapFunction } = require('./ZapFunction');
 
 class BlockStmt {
   constructor(statement, environment) {
@@ -332,6 +333,86 @@ class WhileStmt {
   };
 };
 
+class FunctionStmt {
+  constructor(statement, evaluator, environment) {
+    this.evaluator = evaluator;
+    this.environment = environment;
+    this.errorHandler = new ErrorHandler();
+
+    this.statement = statement;
+
+    this.identifier = null;
+    this.args = [];
+    this.body = [];
+
+    this.index = 1;
+    this.currentToken = this.statement[this.index];
+    this.prevToken = null;
+
+    this.execute();
+  };
+
+  next() {
+    this.prevToken = this.statement[this.index];
+    this.index++;
+    this.currentToken = this.statement[this.index];
+  };
+
+  splitBlock() {
+    this.identifier = this.currentToken.value;
+    this.next();
+    if (!this.currentToken || this.currentToken.type != 'BAR') {
+      this.errorHandler.throw(
+        `EXPECTED '|' AFTER FUNCTION DECLARATION`,
+        this.prevToken.line,
+        this.prevToken.col
+      );
+    };
+    this.next();
+
+    let currentArgument = [];
+    while (this.currentToken.type != 'BAR') {
+      if (this.currentToken.type != 'COMMA') {
+        currentArgument.push(this.currentToken);
+      } else {
+        this.args.push(currentArgument);
+        currentArgument = [];
+      };
+      this.next();
+      if (!this.currentToken) {
+        this.errorHandler.throw(
+          `EXPECTED '|' after argument list`,
+          this.prevToken.line,
+          this.prevToken.col
+        )
+      };
+    };
+    if (currentArgument.length) {
+      this.args.push(currentArgument);
+      currentArgument = [];
+    }
+    this.next();
+
+    if (!this.currentToken || this.currentToken.type != 'EQUALS') {
+      this.errorHandler.throw(
+        `EXPECTED '=' AFTER FN DECLARATION`,
+        this.prevToken.line,
+        this.prevToken.col
+      );
+    };
+    this.next();
+
+    this.body = this.statement.slice(this.index);
+  };
+
+  execute() {
+    this.splitBlock();
+    const zapFunction = new ZapFunction(this.args, this.body);
+    this.environment.define(this.identifier, zapFunction);
+    // console.log(this.environment);
+  };
+};
+
 class Parser {
   constructor (environment) {
     this.environment = environment
@@ -451,6 +532,16 @@ class Parser {
     return stmt;
   }
 
+  handleFunction(statement) {
+    let stmt = new FunctionStmt(
+      statement,
+      this.evaluator,
+      this.environment
+    );
+    // console.log(stmt);
+    return stmt;
+  }
+
   handleStatement(statement) {
     // console.log(statement);
     if (statement[0].type == 'LBRACE') {
@@ -471,6 +562,10 @@ class Parser {
 
     if (statement[0].type == 'WHILE') {
       return this.handleWhile(statement);
+    };
+
+    if (statement[0].type == 'FUNCTION') {
+      return this.handleFunction(statement);
     };
 
     return this.handleExpression(statement);
