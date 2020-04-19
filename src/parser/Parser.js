@@ -370,27 +370,29 @@ class FunctionStmt {
     };
     this.next();
 
-    let currentArgument = [];
-    while (this.currentToken.type != 'BAR') {
-      if (this.currentToken.type != 'COMMA') {
-        currentArgument.push(this.currentToken);
-      } else {
-        this.args.push(currentArgument);
-        currentArgument = [];
-      };
+    while (this.currentToken && this.currentToken.type != 'BAR') {
+      this.args.push(this.currentToken);
       this.next();
       if (!this.currentToken) {
         this.errorHandler.throw(
-          `EXPECTED '|' after argument list`,
+          `EXPECTED '|' AFTER ARGUMENT LIST`,
           this.prevToken.line,
           this.prevToken.col
-        )
+        );
       };
+      if (this.currentToken.type != 'COMMA' && this.currentToken.type != 'BAR') {
+        this.errorHandler.throw(
+          `EXPECTED ',' AFTER ARGUMENT`,
+          this.prevToken.line,
+          this.prevToken.col
+        );
+      }
+      if (this.currentToken.type == 'BAR') {
+        break;
+      };
+      this.next();
     };
-    if (currentArgument.length) {
-      this.args.push(currentArgument);
-      currentArgument = [];
-    }
+
     this.next();
 
     if (!this.currentToken || this.currentToken.type != 'FATARROW') {
@@ -403,11 +405,20 @@ class FunctionStmt {
     this.next();
 
     this.body = this.statement.slice(this.index);
+    this.body.push({
+      type : 'SEMICOLON',
+      value : ';',
+    });
   };
 
   execute() {
     this.splitBlock();
-    const zapFunction = new ZapFunction(this.identifier, this.args, this.body, this.environment);
+    const zapFunction = new ZapFunction(
+      this.identifier, 
+      this.args, 
+      this.body, 
+      this.environment
+    );
     this.environment.define(this.identifier, zapFunction);
   };
 };
