@@ -1,0 +1,13 @@
+{
+  "name": "Zap",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jzsiggy/ZAP.git",
+  "author": "Joao Zsigmond <jzsiggy>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "jzap",
+    "web"
+  ]
+}
