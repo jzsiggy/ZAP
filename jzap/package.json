@@ -1,0 +1,7 @@
+{
+  "name": "jzap",
+  "version": "1.0.0",
+  "main": "src/ZAP/Zap.js",
+  "author": "Joao Zsigmond <jzsiggy>",
+  "license": "MIT"
+}
