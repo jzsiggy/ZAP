@@ -1,13 +1,14 @@
 import React from 'react';
-import { Zap } from 'jzap';
+import ContextProvider from './context/ContextProvider';
+
+import Banner from './components/banner/Banner/Container';
 
 function App() {
   return (
     <div className="App">
-      <h1>Hello World</h1>
-      {
-        console.log(new Zap('show 5;'))
-      }
+      <ContextProvider>
+        <Banner />
+      </ContextProvider>
     </div>
   );
 }
