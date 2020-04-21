@@ -322,13 +322,19 @@ class WhileStmt {
 
   execute() {
     this.splitBlock();
-
+    let max = 1000;
     this.evaluator.load(this.expression);
-
     while (!!this.evaluator.evaluate().value) {
       this.parser.load(this.body);
       this.parser.parse();
       this.evaluator.load(this.expression);
+      max--;
+      if (max <= 0) {
+        this.errorHandler.throw(
+          `MAXIMUM NUMBER OF LOOPS EXCEEDED`
+        );
+        break;
+      };
     };
   };
 };
