@@ -8,7 +8,8 @@ const SectionContainer = styled.div`
   justify-content: space-between;
 `
 
-const Button = styled.a`
+const Button = styled.div`
+  transition: 0.3s ease all;
   display: inline-block;
   border-radius: 3px;
   padding: 0.5rem 0;
@@ -19,6 +20,11 @@ const Button = styled.a`
   color: white;
   border: 2px solid white;
   cursor: pointer;
+
+  &:hover {
+    background: white;
+    color: palevioletred;
+  }
 `
 
 export {

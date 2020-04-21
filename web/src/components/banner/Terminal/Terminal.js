@@ -2,6 +2,26 @@ import React , { Component } from 'react';
 import { Container , Dot , DotContainer , TextField } from './styles';
 
 class Terminal extends Component {
+  getDate() {
+    const monthNames = [
+      "Jan", "Feb", "Marc", "Apr", "May", "June",
+      "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+    ];
+
+    const weekDays = [
+      "Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"
+    ];
+
+    const d = new Date();
+    const weekDay = weekDays[d.getDay()];
+    const day = d.getDate()
+    const month = monthNames[d.getMonth()];
+    const hour = d.getHours();
+    const minute = d.getMinutes();
+    const sec = d.getSeconds();
+    return (`${weekDay} ${month} ${day} ${hour}:${minute}:${sec}`)
+  }
+
   render() {
     return (
       <Container>
@@ -11,7 +31,7 @@ class Terminal extends Component {
           <Dot left='24px' color='rgb(51, 199, 72)' />
         </DotContainer>
         <TextField>
-          hey
+          <span>Last login: {this.getDate()} on ttys002</span>
         </TextField>
       </Container>
     )

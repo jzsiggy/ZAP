@@ -2,6 +2,8 @@ import React , { Component } from 'react';
 import { Button , SectionContainer } from './styles';
 import { Controlled as CodeMirror } from 'react-codemirror2'
 
+import AppContext from '../../../context/AppContext';
+
 require('codemirror/lib/codemirror.css');
 require('codemirror/theme/dracula.css');
 require('codemirror/theme/neat.css');
@@ -29,14 +31,18 @@ class Editor extends Component {
           }}
           onBeforeChange={(editor, data, value) => {
             this.setState({value});
+            this.context.setValue(this.state.value);
           }}
           onChange={(editor, data, value) => {
           }}
         />
-        <Button>Run</Button>
+
+        <Button onClick={this.context.execute}>Run</Button>
       </SectionContainer>
     );
   };
 };
+
+Editor.contextType = AppContext;
 
 export default Editor;
