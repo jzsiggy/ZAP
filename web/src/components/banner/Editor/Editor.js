@@ -23,7 +23,7 @@ class Editor extends Component {
     return (
       <SectionContainer>
         <CodeMirror
-          value={this.state.value}
+          value={this.context.state.value}
           options={{
             mode: 'javascript',
             theme: 'dracula',

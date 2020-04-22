@@ -6,12 +6,15 @@ const Container = styled.div`
 
   background-color: rgb(18 18 18);
   border-radius: 5px;
-  overflow: scroll;
+  overflow: hidden;
+
+  position: relative;
 `
 
 const DotContainer = styled.div`
   display: flex;
   height: 40px;
+  position: absolute;
 `
 
 const Dot = styled.div`
@@ -28,10 +31,20 @@ const Dot = styled.div`
   `}
 `
 const TextField = styled.div`
-  position: relative;
+  position: absolute;
+  height: 95%;
+  top: 30px;
   margin: 0 10px;
   color: white;
   font-family: monospace;
+  overflow: scroll;
+
+  // border: 1px solid red;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
 `
 
 export {

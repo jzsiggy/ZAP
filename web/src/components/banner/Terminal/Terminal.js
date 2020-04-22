@@ -1,5 +1,6 @@
 import React , { Component } from 'react';
 import { Container , Dot , DotContainer , TextField } from './styles';
+import AppContext from '../../../context/AppContext';
 
 class Terminal extends Component {
   getDate() {
@@ -32,10 +33,24 @@ class Terminal extends Component {
         </DotContainer>
         <TextField>
           <span>Last login: {this.getDate()} on ttys002</span>
+          <br/>
+          <br/>
+          {
+            this.context.state.result.map((log, index) => {
+              return (
+                <React.Fragment key={index}>
+                  <span>{log}</span>
+                  <br/>
+                </React.Fragment>
+              );
+            })
+          }
         </TextField>
       </Container>
     )
   };
 };
+
+Terminal.contextType = AppContext;
 
 export default Terminal;
