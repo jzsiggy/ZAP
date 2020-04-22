@@ -3,6 +3,9 @@ import styled from 'styled-components';
 const BannerContainer = styled.div`
   height: 100%;
   background: linear-gradient(to right, #ff5f6d, #ffc371);
+  &:hover {
+    background-color: white;
+  }
 `
 
 const CodeContainer = styled.div`

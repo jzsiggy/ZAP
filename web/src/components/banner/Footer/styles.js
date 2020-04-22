@@ -1,4 +1,13 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const moveUpDown = keyframes`
+  0%, 100% {
+    margin-top: 100px;
+  }
+  50% {
+    margin-top: 85px;
+  }
+`;
 
 const FooterContainer = styled.div`
   position: absolute;
@@ -13,6 +22,10 @@ const FooterContainer = styled.div`
   bottom: 0;
 `
 
+const FooterText = styled.span`
+  position: absolute;
+`
+
 const DownArrow = styled.div`
   height: 50px;
   width: 50px;
@@ -20,9 +33,11 @@ const DownArrow = styled.div`
   background-size: contain;
   background-position: center;
   background-image: url('/down-arrow.png');
+  animation: ${moveUpDown} 2s linear infinite;
 `
 
 export {
   FooterContainer,
+  FooterText,
   DownArrow,
 };

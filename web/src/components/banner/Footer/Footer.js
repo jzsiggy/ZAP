@@ -1,11 +1,11 @@
 import React , { Component } from 'react';
-import { FooterContainer , DownArrow } from './styles';
+import { FooterContainer , FooterText , DownArrow } from './styles';
 
 class Footer extends Component {
   render() {
     return (
       <FooterContainer>
-        <span>Read the Docs</span>
+        <FooterText>Read the Docs</FooterText>
         <DownArrow />
       </FooterContainer>
     );
