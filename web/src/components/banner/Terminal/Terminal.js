@@ -23,6 +23,14 @@ class Terminal extends Component {
     return (`${weekDay} ${month} ${day} ${hour}:${minute}:${sec}`)
   }
 
+  // resultsBeforeErr = () => {
+  //   const { result , errors } = this.context.state;
+  //   if (errors.length) {
+  //     return result.slice(0, errors[0]+1);
+  //   };
+  //   return result;
+  // };
+
   render() {
     return (
       <Container>
@@ -36,13 +44,23 @@ class Terminal extends Component {
           <br/>
           <br/>
           {
-            this.context.state.result.map((log, index) => {
-              return (
-                <React.Fragment key={index}>
-                  <span>{log}</span>
-                  <br/>
-                </React.Fragment>
-              );
+            this.context.state.result.map((item, index) => {
+              console.log(item);
+              if (item.log != undefined) {
+                return (
+                  <React.Fragment key={index}>
+                    <span>{item.log}</span>
+                    <br/>
+                  </React.Fragment>
+                );
+              } else {
+                return (
+                  <React.Fragment key={index}>
+                    <span style={{'color' : 'red'}}>{item.error}</span>
+                    <br/>
+                  </React.Fragment>
+                );
+              }
             })
           }
         </TextField>

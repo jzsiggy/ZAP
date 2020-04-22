@@ -7,7 +7,7 @@ class ContextProvider extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      'value': `@a = 0;
+      value: `@a = 0;
 
 while (a < 100) {
   @b = 2;
@@ -27,7 +27,8 @@ while (a < 100) {
   a = a + 1;
 };
 `,
-      'result': [],
+      result: [],
+      errors: [],
     };
   };
 
@@ -40,8 +41,11 @@ while (a < 100) {
   execute = () => {
     const program = new Zap(this.state.value);
     const logs = program.interpreter.parser.log.values;
+    const errors = program.interpreter.parser.log.errors;
+
     this.setState({
-      result : logs
+      result : logs,
+      errors,
     });
   };
 

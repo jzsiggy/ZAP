@@ -1,4 +1,10 @@
+const { globalLog } = require('../log/Log');
+
 class ErrorHandler {
+  constructor() {
+    this.log = globalLog;
+  };
+
   throw(msg, line, col) {
     let err;
     if (line && col) {
@@ -10,6 +16,7 @@ class ErrorHandler {
       throw new Error(err);
     } catch (e) {
       console.error(e);
+      this.log.error(e);
       // process.exit(1);
     };
   };

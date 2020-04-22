@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const SectionContainer = styled.div`
   width: 40%;
+  min-width: 450px;
   margin: 25vh 0;
   padding: 0 10px;
   display: flex;
@@ -9,6 +10,7 @@ const SectionContainer = styled.div`
   border-radius: 5px;
   flex-direction: column;
   justify-content: space-evenly;
+  overflow: scroll;
 `
 
 const Button = styled.div`
