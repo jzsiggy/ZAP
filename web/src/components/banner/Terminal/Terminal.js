@@ -23,13 +23,9 @@ class Terminal extends Component {
     return (`${weekDay} ${month} ${day} ${hour}:${minute}:${sec}`)
   }
 
-  // resultsBeforeErr = () => {
-  //   const { result , errors } = this.context.state;
-  //   if (errors.length) {
-  //     return result.slice(0, errors[0]+1);
-  //   };
-  //   return result;
-  // };
+  getError = () => {
+
+  };
 
   render() {
     return (
@@ -56,7 +52,7 @@ class Terminal extends Component {
               } else {
                 return (
                   <React.Fragment key={index}>
-                    <span style={{'color' : 'red'}}>{item.error}</span>
+                    <span style={{'color' : 'red'}}>{item.error.message}</span>
                     <br/>
                   </React.Fragment>
                 );

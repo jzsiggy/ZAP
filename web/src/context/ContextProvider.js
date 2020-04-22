@@ -28,7 +28,6 @@ while (a < 100) {
 };
 `,
       result: [],
-      errors: [],
     };
   };
 
@@ -41,11 +40,9 @@ while (a < 100) {
   execute = () => {
     const program = new Zap(this.state.value);
     const logs = program.interpreter.parser.log.values;
-    const errors = program.interpreter.parser.log.errors;
 
     this.setState({
       result : logs,
-      errors,
     });
   };
 

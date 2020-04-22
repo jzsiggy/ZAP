@@ -1,7 +1,6 @@
 class Log {
   constructor() {
     this.values = [];
-    this.errors = [];
   };
 
   add(log) {
@@ -10,10 +9,12 @@ class Log {
     });
   };
 
-  error(e) {
-    this.errors.push(this.values.length);
+  error(e, ln) {
     this.values.push({
-      'error' : e.message,
+      'error' : {
+        'message' : e.message,
+        'line' : ln,
+      }
     });
   };
   
