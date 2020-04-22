@@ -3,6 +3,9 @@ const { Evaluator } = require('../evaluator/Evaluator');
 const { Environment } = require('../environment/Environment');
 const { ZapFunction } = require('./ZapFunction');
 
+const { globalLog } = require('../log/Log');
+
+
 class BlockStmt {
   constructor(statement, environment) {
     this.statement = statement;
@@ -22,7 +25,8 @@ class BlockStmt {
 };
 
 class PrintStmt {
-  constructor(statement, evaluator) {
+  constructor(statement, evaluator, log) {
+    this.log = log;
     this.statement = statement;
     this.expression = this.fetchExpression();
     this.evaluator = evaluator;
@@ -39,9 +43,12 @@ class PrintStmt {
     this.value = this.evaluator.evaluate().value;
 
     if (this.value != undefined) {
-      console.log(this.value);
+      // console.log(this.value);
+      this.log.add(this.value);
+
     } else {
-      console.log();
+      // console.log();
+      this.log.add('');
     };
   };
 };
@@ -434,6 +441,8 @@ class Parser {
     this.environment = environment
     this.evaluator = new Evaluator(this.environment);
     this.errorHandler = new ErrorHandler();
+    this.log = globalLog;
+
 
     this.tokens = null;
     this.index = null;
@@ -502,7 +511,8 @@ class Parser {
   handlePrint(statement) {
     let stmt = new PrintStmt(
       statement,
-      this.evaluator
+      this.evaluator,
+      this.log,
     );
     // console.log(stmt);
     return stmt;
