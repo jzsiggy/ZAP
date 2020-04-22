@@ -5,7 +5,7 @@ const Pic = styled.div`
   width: 150px;
   background-repeat: no-repeat;
   background-size: contain;
-  background-image: url('/logo.png');
+  background-image: url('/ZAP/logo.png');
 `
 
 const Slogan = styled.span`

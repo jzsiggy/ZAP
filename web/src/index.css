@@ -23,3 +23,8 @@ body {
 .App {
   height: 100%;
 }
+
+.CodeMirror {
+  min-height: 350px;
+  border-radius: 5px;
+}

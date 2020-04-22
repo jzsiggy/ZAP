@@ -32,7 +32,7 @@ const DownArrow = styled.div`
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
-  background-image: url('/down-arrow.png');
+  background-image: url('/ZAP/down-arrow.png');
   animation: ${moveUpDown} 2s linear infinite;
 `
 

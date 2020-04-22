@@ -1,4 +1,5 @@
 {
+  "homepage": "http://jzsiggy.github.io/ZAP",
   "name": "web",
   "version": "0.1.0",
   "private": true,
@@ -7,6 +8,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "codemirror": "^5.52.2",
+    "gh-pages": "^2.2.0",
     "jzap": "1.0.0",
     "react": "^16.13.1",
     "react-codemirror2": "^7.1.0",
@@ -15,6 +17,8 @@
     "styled-components": "^5.1.0"
   },
   "scripts": {
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
