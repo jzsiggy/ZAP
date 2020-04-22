@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/ZAP/web/static/css/main.6b97d506.chunk.css",
-    "main.js": "/ZAP/web/static/js/main.2f7e80a6.chunk.js",
-    "main.js.map": "/ZAP/web/static/js/main.2f7e80a6.chunk.js.map",
-    "runtime-main.js": "/ZAP/web/static/js/runtime-main.f91b9051.js",
-    "runtime-main.js.map": "/ZAP/web/static/js/runtime-main.f91b9051.js.map",
-    "static/css/2.9b67f534.chunk.css": "/ZAP/web/static/css/2.9b67f534.chunk.css",
-    "static/js/2.45111a57.chunk.js": "/ZAP/web/static/js/2.45111a57.chunk.js",
-    "static/js/2.45111a57.chunk.js.map": "/ZAP/web/static/js/2.45111a57.chunk.js.map",
-    "index.html": "/ZAP/web/index.html",
-    "precache-manifest.310973eee90d9c02143952c85fcd6946.js": "/ZAP/web/precache-manifest.310973eee90d9c02143952c85fcd6946.js",
-    "service-worker.js": "/ZAP/web/service-worker.js",
-    "static/css/2.9b67f534.chunk.css.map": "/ZAP/web/static/css/2.9b67f534.chunk.css.map",
-    "static/css/main.6b97d506.chunk.css.map": "/ZAP/web/static/css/main.6b97d506.chunk.css.map",
-    "static/js/2.45111a57.chunk.js.LICENSE.txt": "/ZAP/web/static/js/2.45111a57.chunk.js.LICENSE.txt"
+    "main.css": "/ZAP/static/css/main.6b97d506.chunk.css",
+    "main.js": "/ZAP/static/js/main.3e8186d4.chunk.js",
+    "main.js.map": "/ZAP/static/js/main.3e8186d4.chunk.js.map",
+    "runtime-main.js": "/ZAP/static/js/runtime-main.034d0317.js",
+    "runtime-main.js.map": "/ZAP/static/js/runtime-main.034d0317.js.map",
+    "static/css/2.9b67f534.chunk.css": "/ZAP/static/css/2.9b67f534.chunk.css",
+    "static/js/2.db75f255.chunk.js": "/ZAP/static/js/2.db75f255.chunk.js",
+    "static/js/2.db75f255.chunk.js.map": "/ZAP/static/js/2.db75f255.chunk.js.map",
+    "index.html": "/ZAP/index.html",
+    "precache-manifest.f726aa8cd485fb70c1815be3022ff11e.js": "/ZAP/precache-manifest.f726aa8cd485fb70c1815be3022ff11e.js",
+    "service-worker.js": "/ZAP/service-worker.js",
+    "static/css/2.9b67f534.chunk.css.map": "/ZAP/static/css/2.9b67f534.chunk.css.map",
+    "static/css/main.6b97d506.chunk.css.map": "/ZAP/static/css/main.6b97d506.chunk.css.map",
+    "static/js/2.db75f255.chunk.js.LICENSE.txt": "/ZAP/static/js/2.db75f255.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.f91b9051.js",
+    "static/js/runtime-main.034d0317.js",
     "static/css/2.9b67f534.chunk.css",
-    "static/js/2.45111a57.chunk.js",
+    "static/js/2.db75f255.chunk.js",
     "static/css/main.6b97d506.chunk.css",
-    "static/js/main.2f7e80a6.chunk.js"
+    "static/js/main.3e8186d4.chunk.js"
   ]
 }
