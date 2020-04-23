@@ -3,7 +3,7 @@ import AppContext from './AppContext';
 
 import { Zap } from 'jzap';
 
-class ContextProvider extends Component {
+class CodeContextProvider extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -12,7 +12,7 @@ class ContextProvider extends Component {
 while (a < 100) {
   @b = 2;
   @notprime = 0;
-  while (b < (a / 2)) {
+  while (b <= (a / 2)) {
     if (!(a % b == 0)) {
       b = b+1;
     } else {
@@ -21,8 +21,8 @@ while (a < 100) {
     };
   };
   if (!notprime) {
-    show a;
-    show 'is prime';
+    show a + ' is prime';
+    show;
   };
   a = a + 1;
 };
@@ -62,4 +62,4 @@ while (a < 100) {
   };
 };
 
-export default ContextProvider;
+export default CodeContextProvider;

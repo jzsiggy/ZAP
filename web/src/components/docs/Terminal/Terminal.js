@@ -1,8 +1,11 @@
 import React , { Component } from 'react';
 import { Container , Dot , DotContainer , TextField } from './styles';
-import AppContext from '../../../context/AppContext';
 
 class Terminal extends Component {
+  constructor(props) {
+    super(props);
+  };
+
   getDate() {
     const monthNames = [
       "Jan", "Feb", "Marc", "Apr", "May", "June",
@@ -39,13 +42,11 @@ class Terminal extends Component {
           <span>Last login: {this.getDate()} on ttys002</span>
           <br/>
           <br/>
-          <span>1 + 2 / (3 - 4) * 5 % 6 != 8</span>
+          {this.props.text}
         </TextField>
       </Container>
     )
   };
 };
-
-Terminal.contextType = AppContext;
 
 export default Terminal;

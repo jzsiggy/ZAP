@@ -2,7 +2,7 @@ import React , { Component } from 'react';
 import { Button , SectionContainer } from './styles';
 import { Controlled as CodeMirror } from 'react-codemirror2'
 
-import AppContext from '../../../context/AppContext';
+import AppContext from '../context/AppContext';
 
 require('codemirror/lib/codemirror.css');
 require('codemirror/theme/dracula.css');

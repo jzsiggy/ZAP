@@ -1,6 +1,6 @@
 import React , { Component } from 'react';
 import { Container , Dot , DotContainer , TextField } from './styles';
-import AppContext from '../../../context/AppContext';
+import AppContext from '../context/AppContext';
 
 class Terminal extends Component {
   getDate() {
