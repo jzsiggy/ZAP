@@ -3,13 +3,14 @@ import styled , { css } from 'styled-components';
 const Container = styled.div`
   width: 40%;
   min-width: 450px;
-  margin: 25vh 0;
+  margin: 35vh 0 25vh 0;
 
-  background-color: rgb(18 18 18);
+  background-color: rgb(40 42 54);
   border-radius: 5px;
   overflow: hidden;
 
   box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
+    
 
   position: relative;
 `

@@ -1,17 +1,20 @@
 import styled from 'styled-components';
 
-const BannerContainer = styled.div`
+const DocContainer = styled.div`
   height: 100%;
-  background: linear-gradient${props => props.gradient};
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(253, 246, 228);
 `
 
 const CodeContainer = styled.div`
   height: 100%;
+  width: 100%;
   display: flex;
   justify-content: space-evenly;
 `
 
 export {
-  BannerContainer,
+  DocContainer,
   CodeContainer,
 };
