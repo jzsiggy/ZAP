@@ -10,8 +10,8 @@ class Documentation extends Component {
       <DocContainer>
         <Navigation />
         <CodeContainer>
-          <Terminal />
           <Doc />
+          <Terminal />
         </CodeContainer>
       </DocContainer>
     )

@@ -6,15 +6,24 @@ const Pic = styled.div`
   background-repeat: no-repeat;
   background-size: contain;
   background-image: url('/ZAP/logo.png');
+
+  @media only screen and (max-width: 900px) {
+    height: 100px;
+    width: 100px;
+  }
 `
 
 const Slogan = styled.span`
   font-family: 'Orbitron', sans-serif;
   font-weight: bold;
+  @media only screen and (max-width: 900px) {
+    font-size: 0.8rem;
+  }
 `
 
 const LogoContainer = styled.div`
   position: absolute;
+  top: 0;
   width: 100%;
   display: flex;
   flex-direction: column;

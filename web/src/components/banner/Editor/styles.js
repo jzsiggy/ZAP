@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 const SectionContainer = styled.div`
   width: 40%;
-  min-width: 450px;
-  margin: 25vh 0;
+  min-width: 430px;
+  height: 450px;
   padding: 0 10px;
   display: flex;
   background-color: rgba(0, 0, 0, 0.1);
@@ -11,6 +11,12 @@ const SectionContainer = styled.div`
   flex-direction: column;
   justify-content: space-evenly;
   overflow: scroll;
+
+  @media only screen and (max-width: 900px) {
+    min-width: 80%;
+    min-height: 250px;
+    height: 50%;
+  }
 `
 
 const Button = styled.div`

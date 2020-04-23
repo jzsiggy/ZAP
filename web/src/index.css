@@ -25,6 +25,12 @@ body {
 }
 
 .CodeMirror {
-  min-height: 350px;
+  height: 350px !important;
   border-radius: 5px;
+}
+
+@media only screen and (max-width: 900px) {
+  .CodeMirror {
+    max-height: 200px;
+  }
 }

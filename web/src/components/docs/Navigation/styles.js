@@ -1,13 +1,17 @@
 import styled , { css } from 'styled-components';
 
 const Container = styled.div`
-  position: absolute;
+  position: relative;
   width: 60%;
-  height: 35vh;
+  height: 30%;
   margin: 0 20%;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+
+  @media only screen and (max-width: 900px) {
+    max-height: 20%;
+  }
 `
 
 const Dot = styled.div`

@@ -3,7 +3,7 @@ import styled , { css } from 'styled-components';
 const Container = styled.div`
   width: 40%;
   min-width: 450px;
-  margin: 35vh 0 25vh 0;
+  height: 70%;
 
   background-color: rgb(40 42 54);
   border-radius: 5px;
@@ -11,8 +11,13 @@ const Container = styled.div`
 
   box-shadow: 0 0 100px rgba(0, 0, 0, 0.4);
     
-
   position: relative;
+
+  @media only screen and (max-width: 900px) {
+    min-width: 80%;
+    height: 300px;
+    max-height: 38%;
+  }
 `
 
 const DotContainer = styled.div`

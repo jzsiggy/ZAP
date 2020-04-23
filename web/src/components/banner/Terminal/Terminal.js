@@ -41,7 +41,6 @@ class Terminal extends Component {
           <br/>
           {
             this.context.state.result.map((item, index) => {
-              console.log(item);
               if (item.log != undefined) {
                 return (
                   <React.Fragment key={index}>

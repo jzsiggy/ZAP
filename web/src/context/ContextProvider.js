@@ -40,6 +40,7 @@ while (a < 100) {
   execute = () => {
     const program = new Zap(this.state.value);
     const logs = program.interpreter.parser.log.values;
+    console.log(program);
 
     this.setState({
       result : logs,
