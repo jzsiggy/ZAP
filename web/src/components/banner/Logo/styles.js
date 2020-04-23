@@ -8,7 +8,7 @@ const Pic = styled.div`
   background-image: url('/ZAP/logo.png');
 
   @media only screen and (max-width: 900px) {
-    height: 100px;
+    height: 70px;
     width: 100px;
   }
 `
@@ -31,6 +31,10 @@ const LogoContainer = styled.div`
   align-items: center;
   height: 25%;
   color: white;
+
+  @media only screen and (max-width: 900px) {
+    height: 18%;
+  }
 `
 
 export {

@@ -13,10 +13,10 @@ const TextField = styled.div`
   @media only screen and (max-width: 900px) {
     
     border-radius: 5px;
-    padding: 8px;
+    padding: 1%;
     background-color: rgba(0, 0, 0, 0.05);
 
-    min-width: 80%;
+    min-width: 90%;
     height: 300px;
     max-height: 38%;
     overflow: scroll;

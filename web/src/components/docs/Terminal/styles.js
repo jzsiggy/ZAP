@@ -14,7 +14,7 @@ const Container = styled.div`
   position: relative;
 
   @media only screen and (max-width: 900px) {
-    min-width: 80%;
+    min-width: 92%;
     height: 300px;
     max-height: 38%;
   }

@@ -14,6 +14,10 @@ const CodeContainer = styled.div`
   justify-content: space-evenly;
   align-items: center;
   flex-wrap: wrap;
+  
+  @media only screen and (max-width: 900px) {
+    height: 65%;
+  }
 `
 
 export {

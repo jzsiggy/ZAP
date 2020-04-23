@@ -4,7 +4,7 @@ const SectionContainer = styled.div`
   width: 40%;
   min-width: 430px;
   height: 450px;
-  padding: 0 10px;
+  padding: 0 1%;
   display: flex;
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 5px;
@@ -13,7 +13,7 @@ const SectionContainer = styled.div`
   overflow: scroll;
 
   @media only screen and (max-width: 900px) {
-    min-width: 80%;
+    min-width: 90%;
     min-height: 250px;
     height: 50%;
   }
