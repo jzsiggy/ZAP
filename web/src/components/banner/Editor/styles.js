@@ -17,6 +17,11 @@ const SectionContainer = styled.div`
     min-height: 250px;
     height: 50%;
   }
+
+  @media only screen and (max-height: 750px) {
+    min-height: 300px;
+    height: 50%;
+  }
 `
 
 const Button = styled.div`
@@ -24,7 +29,6 @@ const Button = styled.div`
   display: inline-block;
   border-radius: 3px;
   padding: 0.5rem 0;
-  margin: 0 auto;
   text-align: center;
   width: 11rem;
   background: transparent;
@@ -38,7 +42,14 @@ const Button = styled.div`
   }
 `
 
+const BtnContainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`
+
 export {
   SectionContainer,
   Button,
+  BtnContainer,
 };

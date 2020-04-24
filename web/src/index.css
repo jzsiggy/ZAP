@@ -34,3 +34,9 @@ body {
     max-height: 200px;
   }
 }
+
+@media only screen and (max-height: 750px) {
+  .CodeMirror {
+    max-height: 200px;
+  }
+}

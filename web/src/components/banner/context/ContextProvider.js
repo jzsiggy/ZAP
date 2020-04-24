@@ -1,5 +1,6 @@
 import React , { Component } from 'react';
 import AppContext from './AppContext';
+import { examples } from './examples';
 
 import { Zap } from 'jzap';
 
@@ -7,26 +8,7 @@ class CodeContextProvider extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      value: `@a = 0;
-
-while (a < 100) {
-  @b = 2;
-  @notprime = 0;
-  while (b <= (a / 2)) {
-    if (!(a % b == 0)) {
-      b = b+1;
-    } else {
-      b = a;
-      notprime = 1;
-    };
-  };
-  if (!notprime) {
-    show a + ' is prime';
-    show;
-  };
-  a = a + 1;
-};
-`,
+      value: '',
       result: [],
     };
   };
@@ -35,6 +17,10 @@ while (a < 100) {
     this.setState({
       value,
     });
+  };
+
+  setSelection = (selection) => {
+    this.setValue(examples[selection]);
   };
 
   execute = () => {
@@ -52,6 +38,7 @@ while (a < 100) {
       state: this.state,
       setValue: this.setValue,
       execute: this.execute,
+      setSelection: this.setSelection,
     };
     
     return (

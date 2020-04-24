@@ -17,6 +17,11 @@ const Container = styled.div`
     min-width: 92%;
     height: 35%;
   }
+
+  @media only screen and (max-height: 750px) {
+    min-height: 300px;
+    height: 50%;
+  }
 `
 
 const DotContainer = styled.div`

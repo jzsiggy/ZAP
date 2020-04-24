@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import { Button , SectionContainer } from './styles';
+import { Button , SectionContainer , BtnContainer } from './styles';
 import { Controlled as CodeMirror } from 'react-codemirror2'
 
 import AppContext from '../context/AppContext';
@@ -19,6 +19,10 @@ class Editor extends Component {
     };
   };
 
+  handleSelection = (event) => {
+    this.context.setSelection(event.target.value);
+  };
+
   render () {
     return (
       <SectionContainer>
@@ -36,8 +40,20 @@ class Editor extends Component {
           onChange={(editor, data, value) => {
           }}
         />
+        <BtnContainer>
 
-        <Button onClick={this.context.execute}>Run</Button>
+          <select id="example" onChange={this.handleSelection}>
+            <option>-- Examples --</option>
+            <option value="prime">Prime Numbers</option>
+            <option value="function">Function</option>
+            <option value="while">While</option>
+            <option value="variable">Variable</option>
+            <option value="pumpkin">Pumpkins</option>
+          </select>
+
+          <Button onClick={this.context.execute}>Run</Button>
+
+        </BtnContainer>
       </SectionContainer>
     );
   };

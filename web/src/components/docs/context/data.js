@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pink , Purple , Green , Blue , Yellow } from './colors';
 
 const data = {
   expressions : {
@@ -17,7 +18,22 @@ const data = {
     </>,
 
     terminal: <>
-      1 + 2 / (3 - 4) * 5 % 6 != 8;
+      <Purple>1</Purple>&nbsp;
+      <Pink>+</Pink>&nbsp;
+      <Purple>2</Purple>&nbsp;
+      <Pink>/</Pink>&nbsp;
+      (
+      <Purple>3</Purple>&nbsp;
+      <Pink>-</Pink>&nbsp;
+      <Purple>4</Purple>
+      )&nbsp;
+      <Pink>*</Pink>&nbsp;
+      <Purple>5</Purple>&nbsp;
+      <Pink>%</Pink>&nbsp;
+      <Purple>6</Purple>&nbsp;
+      <Pink>!=</Pink>&nbsp;
+      <Purple>8</Purple>
+      ;
     </>,
   },
 
@@ -33,7 +49,11 @@ const data = {
     </>,
 
     terminal: <>
-      @variable = 'I am a string';
+      <Pink>@</Pink>
+      <Green>variable</Green>&nbsp;
+      <Pink>=</Pink>&nbsp;
+      <Yellow>'I am a string'</Yellow>
+      ;
     </>,
   },
 
