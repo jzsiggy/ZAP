@@ -21,8 +21,8 @@ const data = {
       <Purple>1</Purple>&nbsp;
       <Pink>+</Pink>&nbsp;
       <Purple>2</Purple>&nbsp;
-      <Pink>/</Pink>&nbsp;
-      (
+      <Pink>/</Pink>
+      &nbsp;(
       <Purple>3</Purple>&nbsp;
       <Pink>-</Pink>&nbsp;
       <Purple>4</Purple>
@@ -69,10 +69,23 @@ const data = {
     </>,
     
     terminal: <>
-      @x = 5; <br/><br/>
-      if (x == 5) &#123; <br/>
-      &emsp; show "x"; <br/>
-      &#125;;<br/><br/>
+      <Pink>@</Pink>
+      <Green>x</Green>&nbsp;
+      <Pink>=</Pink>&nbsp;
+      <Purple>5</Purple>; 
+      <br/><br/>
+      <Pink>if</Pink>
+      &nbsp;(
+      <Green>x</Green>&nbsp;
+      <Pink>==</Pink>&nbsp;
+      <Purple>5</Purple>
+      ) &#123; 
+      <br/>
+      &emsp; <Green>show</Green>&nbsp;
+      <Yellow>'x'</Yellow>; 
+      <br/>
+      &#125;;
+      <br/><br/>
       * shows x *
     </>,
   },
@@ -88,9 +101,25 @@ const data = {
     </>,
     
     terminal: <>
-      @counter = 0;<br/><br/>
-      while (counter &lt; 10) &#123; <br/>
-      &emsp; show counter = counter + 1; <br/>
+      <Pink>@</Pink>
+      <Green>counter</Green>&nbsp;
+      <Pink>=</Pink>&nbsp;
+      <Purple>0</Purple>;
+      <br/><br/>
+      <Pink>while</Pink>
+      &nbsp;(
+      <Green>counter</Green>&nbsp;
+      <Pink>&lt;</Pink>&nbsp;
+      <Purple>10</Purple>
+      ) &#123;
+      <br/>
+      &emsp; <Green>show</Green>&nbsp;
+      <Green>counter</Green>&nbsp;
+      <Pink>=</Pink>&nbsp;
+      <Green>counter</Green>&nbsp;
+      <Pink>+</Pink>&nbsp;
+      <Purple>1</Purple>;
+      <br/>
       &#125;; <br/><br/>
       * counts to 10 *
 
@@ -111,11 +140,28 @@ const data = {
     </>,
     
     terminal: <>
-      fn sayHi|name, greeting| => &#123; <br/>
-      &emsp;show greeting + ' ' + name; <br/>
+      <Green>fn</Green>&nbsp;
+      <Green>sayHi</Green>
+      <Pink>|</Pink>
+      <Green>name</Green>
+      ,&nbsp;
+      <Green>greeting</Green>
+      <Pink>|</Pink>&nbsp;
+      => &#123; <br/>
+      &emsp; <Green>show</Green> &nbsp;
+      <Green>greeting</Green>&nbsp;
+      <Pink>+</Pink>&nbsp;
+      <Yellow>' '</Yellow>&nbsp;
+      <Pink>+</Pink>&nbsp;
+      <Green>name</Green>; <br/>
       &#125;;<br/><br/>
 
-      sayHi|'John', 'Hello'|;<br/><br/>
+      <Green>sayHi</Green>
+      <Pink>|</Pink>
+      <Yellow>'John'</Yellow>
+      ,
+      <Yellow>'Hello'</Yellow>
+      <Pink>|</Pink>;<br/><br/>
 
       * shows 'Hello John' *
     </>,
