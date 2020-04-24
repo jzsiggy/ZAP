@@ -1,5 +1,4 @@
 import styled , { css } from 'styled-components';
-import DocContextProvider from '../context/ContextProvider';
 
 const Container = styled.div`
   position: relative;
@@ -27,7 +26,7 @@ const Dot = styled.div`
     transform: scale(1.2);
     cursor: pointer;
   }
-  ${props => props.current==props.step && css`
+  ${props => props.current===props.step && css`
     background-color: rgb(40 42 54);
   `}
 `

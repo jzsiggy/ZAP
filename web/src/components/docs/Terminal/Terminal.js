@@ -2,9 +2,6 @@ import React , { Component } from 'react';
 import { Container , Dot , DotContainer , TextField } from './styles';
 
 class Terminal extends Component {
-  constructor(props) {
-    super(props);
-  };
 
   getDate() {
     const monthNames = [

@@ -2,10 +2,6 @@ import React , { Component } from 'react';
 import { TextField , Title , Description } from './styles';
 
 class Doc extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return(
       <TextField>
