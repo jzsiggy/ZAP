@@ -35,7 +35,7 @@ body {
   }
 }
 
-@media only screen and (max-height: 750px) {
+@media only screen and (max-height: 750px) and (min-width: 900px) {
   .CodeMirror {
     max-height: 200px;
   }

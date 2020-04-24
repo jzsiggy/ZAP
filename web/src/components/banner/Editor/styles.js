@@ -18,7 +18,7 @@ const SectionContainer = styled.div`
     height: 50%;
   }
 
-  @media only screen and (max-height: 750px) {
+  @media only screen and (max-height: 750px) and (min-width: 900px) {
     min-height: 300px;
     height: 50%;
   }

@@ -33,6 +33,7 @@ const Title = styled.span`
 
   @media only screen and (max-width: 900px) {
     margin-bottom: 30px;
+    font-size: 1.7rem;
   }
 `
 
@@ -40,6 +41,10 @@ const Description = styled.span`
   margin: 0 30px;
   text-align: center;
   font-size: 1.3rem;
+
+  @media only screen and (max-width: 900px) {
+    font-size: 1rem;
+  }
 `
 
 export {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pink , Purple , Green , Blue , Yellow } from './colors';
+import { Pink , Purple , Green , Yellow } from './colors';
 
 const data = {
   expressions : {
@@ -73,7 +73,7 @@ const data = {
       if (x == 5) &#123; <br/>
       &emsp; show "x"; <br/>
       &#125;;<br/><br/>
-      // shows x
+      * shows x *
     </>,
   },
 
@@ -92,7 +92,7 @@ const data = {
       while (counter &lt; 10) &#123; <br/>
       &emsp; show counter = counter + 1; <br/>
       &#125;; <br/><br/>
-      // counts to 10
+      * counts to 10 *
 
     </>,
   },
@@ -117,7 +117,7 @@ const data = {
 
       sayHi|'John', 'Hello'|;<br/><br/>
 
-      // shows 'Hello John'
+      * shows 'Hello John' *
     </>,
   },
 };
