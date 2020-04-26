@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import { Container , Dot , DotContainer , TextField } from './styles';
+import { Container , Dot , DotContainer , TextField , ToggleStmt } from './styles';
 import AppContext from '../context/AppContext';
 
 class Terminal extends Component {
@@ -23,8 +23,8 @@ class Terminal extends Component {
     return (`${weekDay} ${month} ${day} ${hour}:${minute}:${sec}`)
   }
 
-  getError = () => {
-
+  handleShowStmt = () => {
+    this.context.showStmt(true);
   };
 
   render() {
@@ -59,6 +59,10 @@ class Terminal extends Component {
             })
           }
         </TextField>
+        {
+          this.context.state.result.length &&
+          <ToggleStmt onClick={this.handleShowStmt}/>
+        }
       </Container>
     )
   };

@@ -22,6 +22,8 @@ const Container = styled.div`
     min-height: 300px;
     height: 50%;
   }
+
+  z-index: 1;
 `
 
 const DotContainer = styled.div`
@@ -60,9 +62,25 @@ const TextField = styled.div`
   }
 `
 
+const ToggleStmt = styled.div`
+  transition: 0.3s ease all;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  height: 30px;
+  width: 30px;
+  border: 2px dotted white;
+  border-radius: 50%;
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1)
+  }
+`
+
 export {
   Container,
   Dot,
   DotContainer,
   TextField,
+  ToggleStmt,
 };

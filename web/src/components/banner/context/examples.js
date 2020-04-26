@@ -1,6 +1,6 @@
 const examples = {
   prime: 
-`@a = 0;
+`@a = 2;
 
 while (a < 100) {
   @b = 2;

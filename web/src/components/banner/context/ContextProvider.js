@@ -10,6 +10,20 @@ class CodeContextProvider extends Component {
     this.state = {
       value: '',
       result: [],
+      showStmt: false,
+      program: null,
+    };
+  };
+
+  showStmt = (show) => {
+    if (show) {
+      this.setState({
+        showStmt: true,
+      })
+    } else {
+      this.setState({
+        showStmt: false,
+      });
     };
   };
 
@@ -20,16 +34,20 @@ class CodeContextProvider extends Component {
   };
 
   setSelection = (selection) => {
-    this.setValue(examples[selection]);
+    if (examples[selection]) {
+      this.setValue(examples[selection]);
+    } else {
+      this.setValue('');
+    }
   };
 
   execute = () => {
     const program = new Zap(this.state.value);
     const logs = program.interpreter.parser.log.values;
-    console.log(program);
-
+    
     this.setState({
       result : logs,
+      program : program.interpreter,
     });
   };
 
@@ -39,6 +57,7 @@ class CodeContextProvider extends Component {
       setValue: this.setValue,
       execute: this.execute,
       setSelection: this.setSelection,
+      showStmt: this.showStmt,
     };
     
     return (
