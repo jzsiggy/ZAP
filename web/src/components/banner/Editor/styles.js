@@ -10,7 +10,7 @@ const SectionContainer = styled.div`
   border-radius: 5px;
   flex-direction: column;
   justify-content: space-evenly;
-  overflow: scroll;
+  overflow: hidden;
 
   @media only screen and (max-width: 900px) {
     min-width: 90%;

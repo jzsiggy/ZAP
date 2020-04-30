@@ -10,11 +10,15 @@ const Container = styled.div`
   left: 5%;
   right: 5%;
   z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const Close = styled.div`
   transition: 0.2s ease all;  
-  position: relative;
+  position: absolute;
   top: 10px;
   left: 10px;
   height: 30px;
@@ -33,7 +37,13 @@ const Close = styled.div`
   }
 `
 
+const StmtWrapper = styled.div`
+  height: 80%;
+  width: 80%;
+`
+
 export {
   Container,
-  Close
+  Close,
+  StmtWrapper,
 };

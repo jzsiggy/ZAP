@@ -1,4 +1,4 @@
-import styled , { css } from 'styled-components';
+import styled , { css , keyframes } from 'styled-components';
 
 const Container = styled.div`
   width: 40%;
@@ -62,6 +62,16 @@ const TextField = styled.div`
   }
 `
 
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
 const ToggleStmt = styled.div`
   transition: 0.3s ease all;
   position: absolute;
@@ -71,6 +81,9 @@ const ToggleStmt = styled.div`
   width: 30px;
   border: 2px dotted white;
   border-radius: 50%;
+
+  animation: ${rotate} 10s linear infinite;
+
   &:hover {
     cursor: pointer;
     transform: scale(1.1)
