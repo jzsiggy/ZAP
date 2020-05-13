@@ -9,7 +9,6 @@ import Structure from './components/codeStructure/Structure/Structure';
 function App() {
   return (
     <div className="App">
-      
       <CodeContextProvider>
         <Structure />
         <Banner />

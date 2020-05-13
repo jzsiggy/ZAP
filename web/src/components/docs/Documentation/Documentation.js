@@ -1,8 +1,9 @@
 import React , { Component } from 'react';
-import { DocContainer , CodeContainer } from './styles';
+import { DocContainer , CodeContainer, GithubMark } from './styles';
 import Terminal from '../Terminal/Terminal';
 import Doc from '../Doc/Doc';
 import Navigation from '../Navigation/Navigation';
+import Footer from '../footer/Footer';
 
 import data from '../context/data';
 
@@ -12,6 +13,9 @@ class Documentation extends Component {
   render() {
     return (
       <DocContainer>
+        <GithubMark 
+          href='https://github.com/jzsiggy/ZAP'
+        />
         <Navigation 
         
         />
@@ -24,6 +28,7 @@ class Documentation extends Component {
             text={data[this.context.state.step]['terminal']}
           />
         </CodeContainer>
+        <Footer />
       </DocContainer>
     )
   };

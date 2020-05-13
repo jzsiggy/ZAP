@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BannerContainer , CodeContainer } from './styles';
+import { BannerContainer , CodeContainer, GithubMark } from './styles';
 import Editor from '../Editor/Editor';
 import Terminal from '../Terminal/Terminal';
 import Logo from '../Logo/Logo';
@@ -26,6 +26,9 @@ class Banner extends Component {
       gradient={gradientList[Math.floor(Math.random() * gradientList.length)]}
       >
         <Logo />
+        <GithubMark 
+          href='https://github.com/jzsiggy/ZAP'
+        />
         <CodeContainer>
           <Editor />
           <Terminal />

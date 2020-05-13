@@ -20,7 +20,28 @@ const CodeContainer = styled.div`
   }
 `
 
+const GithubMark = styled.a`
+  transition: ease 0.2s all;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  height: 50px;
+  width: 50px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url('/ZAP/gh-mark.png');
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  @media only screen and (max-width: 900px) {
+    display: none;
+  }
+`
+
 export {
   BannerContainer,
   CodeContainer,
+  GithubMark,
 };

@@ -5,6 +5,7 @@ const DocContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  align-items: center;
   background-color: rgb(253, 246, 228);
 `
 
@@ -21,7 +22,28 @@ const CodeContainer = styled.div`
   }
 `
 
+const GithubMark = styled.a`
+  transition: 0.2s ease all;
+  position: absolute;
+  top: ${window.innerHeight + 10}px;
+  right: 10px;
+  height: 30px;
+  width: 30px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url('/ZAP/gh-mark.png');
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  @media only screen and (min-width: 900px) {
+    display: none;
+  }
+`
+
 export {
   DocContainer,
   CodeContainer,
+  GithubMark,
 };
